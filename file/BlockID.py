@@ -5,40 +5,70 @@
 # @Project : TestDB
 
 class BlockID:
-    """ To store some information about block.
-    Record the file and block number where the block is located.
+    """Represent a block in a file with its filename and block number.
+
+    A BlockID stores the information about the file and the block number where a block is located.
 
     Attributes:
-        __filename: The file where the block is located.
-        __blknum: The block number.
+        __filename (str): The name of the file where the block is stored.
+        __blknum (int): The block number within the file.
+
     """
 
     def __init__(self, filename: str, blknum: int):
+        """
+        Initializes a BlockID with the given filename and block number.
+
+        Args:
+            filename (str): The name of the file where the block is stored.
+            blknum (int): The block number within the file.
+        """
         self.__filename = filename
         self.__blknum = blknum
 
     @property
     def filename(self) -> str:
-        """
-        Returns: The file where the block is located.
+        """Returns the filename of the block.
+
+        Returns:
+            str: The filename where the block is located.
         """
         return self.__filename
 
     @property
     def number(self) -> int:
-        """
-        Returns: The block number
+        """Returns the block number.
+
+        Returns:
+            int: The block number.
         """
         return self.__blknum
 
     def __eq__(self, other):
+        """Checks if this BlockID is equal to another.
+
+        Args:
+            other (BlockID): Another BlockID to compare with.
+
+        Returns:
+            bool: True if the BlockID is the same, False otherwise.
+        """
         if isinstance(other, BlockID):
-            return self.__filename != other.__filename \
-                or self.__blknum != other.__blknum
+            return self.__filename == other.__filename and self.__blknum == other.__blknum
         return False
 
     def __str__(self):
+        """Returns a string representation of the BlockID.
+
+        Returns:
+            str: String representation in the format "[file: {filename}, block: {blknum}]".
+        """
         return f"[file: {self.__filename}, block: {self.__blknum}]"
 
     def __hash__(self):
+        """Returns the hash value of the BlockID.
+
+        Returns:
+            int: The hash value for the BlockID.
+        """
         return hash(str(self))
