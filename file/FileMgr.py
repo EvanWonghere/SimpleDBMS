@@ -104,7 +104,7 @@ class FileMgr:
 
             # After write, we can remove this block from cache since it's been flushed to disk
             if blk in self.__cache:
-                del self.__cache[blk]
+                self.__cache.pop(blk)
 
         except IOError as e:
             raise RuntimeError(f"Cannot write block {blk}") from e

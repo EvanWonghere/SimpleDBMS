@@ -62,6 +62,7 @@ class LogMgr:
         if LSN >= self.__latest_LSN:
             self.__flush()  # Flush the current log page to disk
 
+    @property
     def iterator(self) -> LogIterator:
         """
         Returns an iterator to traverse the log in reverse order.

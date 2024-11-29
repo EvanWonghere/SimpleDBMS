@@ -102,7 +102,7 @@ class BufferMgr:
         buff = self.__try_pin(blk)
 
         while buff is None and not self.__waiting_too_long(start_time):
-            time.sleep(random.random() * self.__MAX_TIME)  # Wait for a random time to avoid contention
+            time.sleep(0.1)  # Sleep for a while
             buff = self.__try_pin(blk)
 
         if buff is None:
