@@ -32,8 +32,8 @@ class CommitRecord(LogRecord):
         """
 
         Args:
-            lm: Log manager, uses it to add log.
-            tx_num: The transaction number.
+            lm (LogMgr): Log manager, uses it to add log.
+            tx_num (int): The transaction number.
 
         Returns: The LSN of the new log.
 

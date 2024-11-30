@@ -29,7 +29,16 @@ class StartRecord(LogRecord):
 
     @staticmethod
     def write_to_log(lm: LogMgr, tx_num: int):
-        rec = bytearray(2 * 4)
+        """
+
+        Args:
+            lm (LogMgr): Log manager, uses it to add log.
+            tx_num (int): The transaction number.
+
+        Returns: The LSN of the new log.
+
+        """
+        rec = bytearray(2 * 4)  # Store 2 int, one for record type, another for transaction number.
         p = Page(rec)
         p.set_int(LogRecord._TYPE_POS, RecordType.START.value)
         p.set_int(LogRecord._TX_POS, tx_num)

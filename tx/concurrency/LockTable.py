@@ -5,7 +5,6 @@
 # @Project : TestDB
 import time
 from file.BlockID import BlockID
-from tx.concurrency.LockAbortException import LockAbortException
 
 
 class LockTable:

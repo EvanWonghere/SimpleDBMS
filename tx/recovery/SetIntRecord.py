@@ -41,6 +41,18 @@ class SetIntRecord(LogRecord):
 
     @staticmethod
     def write_to_log(lm: LogMgr, tx_num: int, blk: BlockID, offset: int, value: int) -> int:
+        """
+
+        Args:
+            lm (LogMgr): Log manager, uses it to add log.
+            tx_num (int): The transaction number.
+            blk (BlockID): The block number.
+            offset (int): The transaction offset.
+            value (int): The transaction value.
+
+        Returns: The LSN of the new log.
+
+        """
         block_pos = LogRecord._FILE_POS + Page.max_length(len(blk.filename))
         offset_pos = block_pos + 4
         value_pos = offset_pos + 4
