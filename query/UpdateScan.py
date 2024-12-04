@@ -42,7 +42,7 @@ class UpdateScan(Scan, ABC):
         pass
 
     @abstractmethod
-    def set_str(self, field_name: str, value: str):
+    def set_string(self, field_name: str, value: str):
         """
         Set a string value for a specified field in the current record.
 

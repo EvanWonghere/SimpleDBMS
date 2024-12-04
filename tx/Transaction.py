@@ -56,10 +56,12 @@ class Transaction:
 
     def pin(self, blk: BlockID):
         """ Pin a block into the buffer pool. """
+        print("Transaction called pin")
         self.__buffers.pin(blk)
 
     def unpin(self, blk: BlockID):
         """ Unpin a block from the buffer pool. """
+        print("Transaction called unpin")
         self.__buffers.unpin(blk)
 
     def get_int(self, blk: BlockID, offset: int) -> int:
@@ -67,6 +69,7 @@ class Transaction:
         if not self.__cm.s_lock(blk):
             raise InterruptedError("Unable to acquire shared lock on block.")
         buff = self.__buffers.get_buffer(blk)
+        print(f"Try get buff of {blk}")
         return buff.contents.get_int(offset)
 
     def set_int(self, blk: BlockID, offset: int, value: int, ok_to_log: bool):

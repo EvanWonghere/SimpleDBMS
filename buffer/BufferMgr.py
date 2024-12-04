@@ -76,6 +76,7 @@ class BufferMgr:
         Args:
             buff (Buffer): The buffer to unpin.
         """
+        print("Buffer Mgr called unpin")
         buff.unpin()
         if not buff.is_pinned:
             self.__num_available += 1
@@ -136,6 +137,7 @@ class BufferMgr:
         if buff is None:
             buff = self.__choose_unpinned_buffer()
             if buff is None:
+                print("Try pin failed")
                 return None  # No buffer available
             buff.assign_to_block(blk)  # Assign the block to the chosen buffer
 

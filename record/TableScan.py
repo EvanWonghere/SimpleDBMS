@@ -39,7 +39,7 @@ class TableScan(UpdateScan):
         self.__table_file_name: str = table_name + self.TABLE_FILE_SUFFIX
 
         self.__rp: RecordPage = None  # Current RecordPage
-        self.__current_slot: int = -1  # Current slot number
+        self.__current_slot: int = None  # Current slot number
 
         # Initialize the scan by moving to the first block or creating a new block if table is empty
         if tx.size(self.__table_file_name) == 0:
@@ -79,7 +79,7 @@ class TableScan(UpdateScan):
         """
         self.__rp.set_int(self.__current_slot, field_name, value)
 
-    def set_str(self, field_name: str, value: str):
+    def set_string(self, field_name: str, value: str):
         """
         Set a string value for a specified field in the current record.
 
@@ -158,8 +158,9 @@ class TableScan(UpdateScan):
         Returns:
             bool: True if a next record is found, False if the end of the table is reached.
         """
+        # print(f"In TableScan.next(), current_slot is {self.__current_slot}")
         self.__current_slot = self.__rp.next_after(self.__current_slot)
-        while self.__current_slot == -1:
+        while self.__current_slot < 0:
             if self.__at_last_block():
                 return False
             next_block_num = self.__rp.block.number + 1
@@ -182,7 +183,7 @@ class TableScan(UpdateScan):
         """
         return self.__rp.get_int(self.__current_slot, field_name)
 
-    def get_str(self, field_name: str) -> str:
+    def get_string(self, field_name: str) -> str:
         """
         Get a string value from a specified field in the current record.
 
@@ -214,7 +215,7 @@ class TableScan(UpdateScan):
         if field_type == FieldType.INT:
             return Constant(self.get_int(field_name))
         elif field_type == FieldType.STRING:
-            return Constant(self.get_str(field_name))
+            return Constant(self.get_string(field_name))
         else:
             raise ValueError(f"Unsupported FieldType '{field_type}' for field '{field_name}'.")
 
@@ -237,6 +238,7 @@ class TableScan(UpdateScan):
         This method unpins the current block from the buffer pool.
         """
         if self.__rp is not None:
+            print("TableScan called unpin")
             self.__tx.unpin(self.__rp.block)
             self.__rp = None
             self.__current_slot = -1

@@ -55,7 +55,7 @@ class Scan(ABC):
         pass
 
     @abstractmethod
-    def get_str(self, field_name: str) -> str:
+    def get_string(self, field_name: str) -> str:
         """
         Retrieve a string value from the current record.
 

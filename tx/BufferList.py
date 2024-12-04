@@ -30,7 +30,11 @@ class BufferList:
         Returns:
             Buffer: The buffer corresponding to the BlockID, or None if not found.
         """
-        return self.__buffers.get(blk, None)
+        print(f"Buffer list's buffers is None? {self.__buffers == {}}")
+        print(f"Buffers keys ", end="")
+        for b in self.__buffers.keys():
+            print(b)
+        return self.__buffers.get(blk)
 
     def pin(self, blk: BlockID):
         """ Pin a block into the buffer pool.
@@ -41,6 +45,7 @@ class BufferList:
             blk (BlockID): The BlockID to pin.
         """
         buff = self.__bm.pin(blk)  # Retrieve the buffer for the block
+        print(f"Block {blk} pinned to {buff}")
         self.__buffers[blk] = buff
         self.__pins.append(blk)
 
@@ -51,6 +56,7 @@ class BufferList:
             blk (BlockID): The BlockID to unpin.
         """
         if blk in self.__buffers:
+            print("Block {blk} unpinned.".format(blk=blk))
             buff = self.__buffers.pop(blk)
             self.__bm.unpin(buff)  # Unpin the buffer
             self.__pins.remove(blk)  # Remove the BlockID from the pinned list

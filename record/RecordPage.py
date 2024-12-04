@@ -144,6 +144,7 @@ class RecordPage:
         Returns:
             int: The next used slot number, or -1 if no such slot exists.
         """
+        # print(f"In next_after, slot: {slot}")
         return self.__search_after(slot, self.USED)
 
     def insert_after(self, slot: int) -> int:
@@ -220,6 +221,7 @@ class RecordPage:
         """
         slot += 1
         while self.__is_valid_slot(slot):
+            # print(f"Try get int blk: {str(self.__blk)}, slot: {slot}")
             current_flag = self.__tx.get_int(self.__blk, self.__offset(slot))
             if current_flag == flag:
                 return slot
