@@ -18,8 +18,8 @@ class MetadataMgr:
     def __init__(self, is_new: bool, tx: Transaction):
         self.__tm = TableMgr(is_new, tx)
         self.__vm = ViewMgr(is_new, self.__tm, tx)
-        print("\n**************************************************************8888")
-        print("Start StatMgr init")
+        # print("\n**************************************************************8888")
+        # print("Start StatMgr init")
         self.__sm = StatMgr(self.__tm, tx)
         self.__im = IndexMgr(is_new, self.__tm, self.__sm, tx)
 

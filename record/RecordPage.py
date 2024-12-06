@@ -38,6 +38,7 @@ class RecordPage:
         self.__tx = tx
         self.__blk = blk
         self.__layout = layout
+        # print(f"RecordPage called pin block {self.__blk}")
         self.__tx.pin(self.__blk)  # Pin the block in the buffer pool
 
     def set_int(self, slot: int, field_name: str, value: int):
@@ -85,6 +86,7 @@ class RecordPage:
             KeyError: If the field name does not exist in the schema.
         """
         field_pos = self.__get_field_pos(slot, field_name)
+        # print(f"Setting field {field_name}, pos is {self.__offset(slot)} + {self.__layout.get_offset(field_name)}")
         self.__tx.set_string(self.__blk, field_pos, value, True)
 
     def get_string(self, slot: int, field_name: str) -> str:
@@ -102,6 +104,7 @@ class RecordPage:
             KeyError: If the field name does not exist in the schema.
         """
         field_pos = self.__get_field_pos(slot, field_name)
+        # print(f"Getting field {field_name}, pos is {self.__offset(slot)} + {self.__layout.get_offset(field_name)}")
         return self.__tx.get_string(self.__blk, field_pos)
 
     def delete(self, slot: int):
@@ -206,7 +209,9 @@ class RecordPage:
         """
         if flag not in (self.EMPTY, self.USED):
             raise ValueError("Flag must be EMPTY (0) or USED (1).")
+        # print(f"Slot {slot} sat flag {flag}, blk is {self.__blk}.")
         self.__tx.set_int(self.__blk, self.__offset(slot), flag, True)
+        # print(f"Sat value {self.__tx.get_int(self.__blk, slot)}.")
 
     def __search_after(self, slot: int, flag: int) -> int:
         """
@@ -224,8 +229,14 @@ class RecordPage:
             # print(f"Try get int blk: {str(self.__blk)}, slot: {slot}")
             current_flag = self.__tx.get_int(self.__blk, self.__offset(slot))
             if current_flag == flag:
+                # print(f"slot return {slot}")
                 return slot
+            # print(f"Current slot offset is {self.__offset(slot)}, blk is {self.__blk}.")
+            # print("Current flag is {flg}, {val}.".format(flg="EMPTY" if current_flag == 0 else "USED", val=current_flag))
+            # print("Wanted flag is {flg}, {val}.".format(flg="EMPTY" if flag == 0 else "USED", val=flag))
+            # print(f"Current flag == Wanted flag? {current_flag == flag}, Current slot is {slot}")
             slot += 1
+        # print("In search after, -1 returned")
         return -1
 
     def __is_valid_slot(self, slot: int) -> bool:
@@ -251,4 +262,5 @@ class RecordPage:
         Returns:
             int: The byte offset of the slot.
         """
+        # print(f"Calculating offset: {slot} * {self.__layout.slot_size}")
         return slot * self.__layout.slot_size

@@ -18,8 +18,9 @@ class IndexInfo:
         self.__index_name = index_name
         self.__field_name = field_name
         self.__tx = tx
-        self.__index_layout = self.__create_index_layout()
         self.__table_schema = table_schema
+        # print(f"In index info initialisation, schema's fields are {self.__table_schema.fields}.")
+        self.__index_layout = self.__create_index_layout()
         self.__stat_info = stat_info
 
     def open(self) -> Index:
@@ -43,7 +44,7 @@ class IndexInfo:
         schema.add_int_field("block")
         schema.add_int_field("id")
 
-        if schema.get_field_type(self.__field_name) is FieldType.INT:
+        if self.__table_schema.get_field_type(self.__field_name) is FieldType.INT:
             schema.add_int_field("data_value")
         else:
             length = self.__table_schema.get_field_length(self.__field_name)

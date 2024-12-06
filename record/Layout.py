@@ -82,6 +82,7 @@ class Layout:
             KeyError: If the field name does not exist in the schema.
         """
         if field_name in self.__offset:
+            # print(f"In layout, getting offset for field {field_name}, offset is {self.__offset[field_name]}")
             return self.__offset[field_name]
         else:
             raise KeyError(f"Field '{field_name}' does not exist in the layout.")

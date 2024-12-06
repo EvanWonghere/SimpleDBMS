@@ -87,7 +87,11 @@ class Page:
             str: The string read from the buffer.
         """
         b = self.get_bytes(offset)
-        return b.decode(self.__CHARSET)
+        try:
+            string = b.decode(self.__CHARSET)
+            return string
+        except UnicodeDecodeError:
+            return None
 
     def set_string(self, offset: int, s: str):
         """Writes a string to the buffer at the specified offset.

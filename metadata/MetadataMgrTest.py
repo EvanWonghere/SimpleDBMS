@@ -18,8 +18,13 @@ sch = Schema()
 sch.add_int_field("A")
 sch.add_string_field("B", 9)
 
+# print(f"Current fields are: {sch.fields}")
+
 mdm.create_table("MyTable", sch, tx)
 layout = mdm.get_layout("MyTable", tx)
+print("Generated layout: ", end="")
+for name in layout.schema.fields:
+    print(f"{name}", end=", ")
 size = layout.slot_size
 sch2 = layout.schema
 print("MyTable has slot size", size)
@@ -47,7 +52,13 @@ print("View def =", v)
 
 mdm.create_index("indexA", "MyTable", "A", tx)
 mdm.create_index("indexB", "MyTable", "B", tx)
+print("***************************************************************************")
+print("Start get info")
 idxmap = mdm.get_index_info("MyTable", tx)
+print("End get info")
+print(f"idxmap is empty : {idxmap == {}}")
+print(f"idxmap is {idxmap.keys()}: {idxmap.values()}")
+print("***************************************************************************")
 
 ii = idxmap["A"]
 print("B(indexA) =", ii.accessed_blocks)

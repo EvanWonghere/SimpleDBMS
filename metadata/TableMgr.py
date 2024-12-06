@@ -33,7 +33,9 @@ class TableMgr:
             self.create_table("field_cat", fcatSchema, tx)
 
     def create_table(self, table_name: str, schema: Schema, tx: Transaction):
+        # print(f"In create_table, schema's fields are: {schema.fields}")
         layout = Layout(schema)
+        # print(f"creating table: {table_name}, slot_size is {layout.slot_size}")
         tcat = TableScan(tx, "table_cat", self.__tcatLayout)
         tcat.insert()
         tcat.set_string("table_name", table_name)
@@ -53,8 +55,10 @@ class TableMgr:
         size = -1
         tcat = TableScan(tx, "table_cat", self.__tcatLayout)
         while tcat.next():
+            # print("In layout while")
             if tcat.get_string("table_name") == table_name:
                 size = tcat.get_int("slot_size")
+                # print(f"size matched {size}")
                 break
         tcat.close()
 

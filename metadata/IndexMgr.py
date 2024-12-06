@@ -25,24 +25,32 @@ class IndexMgr:
         self.__layout = self.__tm.get_layout("index_cat", tx)
 
     def create_index(self, index_name: str, table_name: str, field_name: str, tx:Transaction):
-        ts = TableScan(tx, table_name, self.__layout)
+        ts = TableScan(tx, "index_cat", self.__layout)
         ts.insert()
+        # print(f"TS current slot is {ts.get_current_slot}")
         ts.set_string("index_name", index_name)
         ts.set_string("table_name", table_name)
         ts.set_string("field_name", field_name)
+        s = ts.get_string("field_name")
+        # print(f"TS field name sat? {s}")
         ts.close()
 
     def get_index_info(self, table_name: str, tx: Transaction) -> dict[str, IndexInfo]:
         res: dict[str, IndexInfo] = {}
-        ts = TableScan(tx, table_name, self.__layout)
+        ts = TableScan(tx, "index_cat", self.__layout)
 
         while ts.next():
-            if ts.get_string("table_name") == table_name:
+            # print(f"TS current slot is {ts.get_current_slot}")
+            s = ts.get_string("table_name")
+            if s == table_name:
+                # print(f"Got table name is {s}")
                 index_name = ts.get_string("index_name")
                 field_name = ts.get_string("field_name")
                 layout = self.__tm.get_layout(table_name, tx)
+                # print(f"Is layout.schema None? {layout.schema is None}")
+                # print(f"layout.schema's fields are {layout.schema.fields}")
                 stat_info = self.__sm.get_stat_info(table_name, layout, tx)
                 index_info = IndexInfo(index_name, field_name, tx, layout.schema, stat_info)
-                res[index_name] = index_info
+                res[field_name] = index_info
         ts.close()
         return res

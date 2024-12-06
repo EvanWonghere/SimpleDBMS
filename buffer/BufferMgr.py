@@ -76,7 +76,7 @@ class BufferMgr:
         Args:
             buff (Buffer): The buffer to unpin.
         """
-        print("Buffer Mgr called unpin")
+        # print("Buffer Mgr called unpin")
         buff.unpin()
         if not buff.is_pinned:
             self.__num_available += 1

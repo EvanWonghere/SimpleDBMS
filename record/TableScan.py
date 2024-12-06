@@ -43,8 +43,10 @@ class TableScan(UpdateScan):
 
         # Initialize the scan by moving to the first block or creating a new block if table is empty
         if tx.size(self.__table_file_name) == 0:
+            # print("Move to new block")
             self.__move_to_new_block()
         else:
+            # print("Move to block zero")
             self.__move_to_block(0)
 
     def set_value(self, field_name: str, value: Constant):
@@ -238,7 +240,7 @@ class TableScan(UpdateScan):
         This method unpins the current block from the buffer pool.
         """
         if self.__rp is not None:
-            print("TableScan called unpin")
+            # print("TableScan called unpin")
             self.__tx.unpin(self.__rp.block)
             self.__rp = None
             self.__current_slot = -1
@@ -275,3 +277,7 @@ class TableScan(UpdateScan):
             bool: True if the current block is the last block, False otherwise.
         """
         return self.__rp.block.number == self.__tx.size(self.__table_file_name) - 1
+
+    @property
+    def get_current_slot(self) -> int:
+        return self.__current_slot

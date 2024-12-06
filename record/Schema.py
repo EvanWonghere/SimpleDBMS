@@ -36,9 +36,6 @@ class Schema:
         """
         Initialize an empty schema.
 
-        Attributes:
-            __fields (List[str]): A list of field names in the schema.
-            __info (Dict[str, FieldInfo]): A mapping from field names to their respective FieldInfo.
         """
         self.__fields: List[str] = []
         self.__info: Dict[str, FieldInfo] = {}
@@ -58,6 +55,7 @@ class Schema:
         """
         if field_name in self.__info:
             raise ValueError(f"Field '{field_name}' already exists in the schema.")
+        # print(f"Field {field_name} add to schema")
         self.__fields.append(field_name)
         self.__info[field_name] = field_info
 
@@ -141,7 +139,7 @@ class Schema:
         Returns:
             bool: True if the field exists in the schema, False otherwise.
         """
-        return field_name in self.__info
+        return field_name in self.__fields
 
     def get_field_type(self, field_name: str) -> FieldType:
         """

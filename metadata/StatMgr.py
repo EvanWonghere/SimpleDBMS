@@ -35,22 +35,23 @@ class StatMgr:
 
 
     def __refresh_stats(self, tx: Transaction):
-        print("Get into refresh stats")
+        # print("Get into refresh stats")
 
         self.__table_stats = {}
         self.__calls_num = 0
 
         tcat_layout = self.__tm.get_layout("table_cat", tx)
+        # print("******************************************************888")
+        # print("Start refresh stats")
         ts = TableScan(tx, "table_cat", tcat_layout)
-        print("******************************************************888")
-        print("Start refresh stats")
+        # print("******************************************************888\n before while")
         while ts.next():
-            print("************************************************************88\n while started")
+            # print("************************************************************88\n while started")
             tbl_name = ts.get_string("table_name")
             layout = self.__tm.get_layout(tbl_name, tx)
             info = self.__calc_table_stats(tbl_name, layout, tx)
             self.__table_stats[tbl_name] = info
-            print("************************************************************88\n while ended")
+            # print("************************************************************88\n while ended")
         ts.close()
 
     @staticmethod
