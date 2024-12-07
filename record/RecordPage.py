@@ -148,7 +148,10 @@ class RecordPage:
             int: The next used slot number, or -1 if no such slot exists.
         """
         # print(f"In next_after, slot: {slot}")
-        return self.__search_after(slot, self.USED)
+        # print("next-after calling search-after")
+        res = self.__search_after(slot, self.USED)
+        # print(f"next-after called search-after, return {res}")
+        return res
 
     def insert_after(self, slot: int) -> int:
         """
@@ -229,7 +232,7 @@ class RecordPage:
             # print(f"Try get int blk: {str(self.__blk)}, slot: {slot}")
             current_flag = self.__tx.get_int(self.__blk, self.__offset(slot))
             if current_flag == flag:
-                # print(f"slot return {slot}")
+                # print(f"flag matched {flag}, slot return {slot}")
                 return slot
             # print(f"Current slot offset is {self.__offset(slot)}, blk is {self.__blk}.")
             # print("Current flag is {flg}, {val}.".format(flg="EMPTY" if current_flag == 0 else "USED", val=current_flag))
@@ -250,6 +253,9 @@ class RecordPage:
             bool: True if the slot is valid, False otherwise.
         """
         slot_end_offset = self.__offset(slot + 1)
+        # print(f"slot_end_offset is {slot_end_offset}")
+        # print(f"block size is {self.__tx.block_size}")
+        # print(f"is_valid_slot returns {slot_end_offset <= self.__tx.block_size}")
         return slot_end_offset <= self.__tx.block_size
 
     def __offset(self, slot: int) -> int:

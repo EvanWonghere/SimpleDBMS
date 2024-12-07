@@ -48,9 +48,9 @@ class LogIterator:
         """
         # There is more data if the current position is before the end of the current block,
         # or if there are more blocks to read (i.e., we're not at the first block).
-        print("current pos: " + str(self.__current_pos))
-        print("blk size: " + str(self.__fm.block_size))
-        print("blk num: " + str(self.__blk.number))
+        # print("current pos: " + str(self.__current_pos))
+        # print("blk size: " + str(self.__fm.block_size))
+        # print("blk num: " + str(self.__blk.number))
         return self.__current_pos < self.__fm.block_size or self.__blk.number > 0
 
     def next(self) -> bytearray:

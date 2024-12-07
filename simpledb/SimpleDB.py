@@ -22,7 +22,7 @@ class SimpleDB:
             self.__lm = LogMgr(self.__fm, self.LOG_FILE)
             self.__bm = BufferMgr(self.__fm, self.__lm, self.BUFF_SIZE)
             tx = self.newTx()
-            isnew = self.__fm.isNew()
+            isnew = self.__fm.is_new
             if isnew:
                 print("creating new database")
             else:

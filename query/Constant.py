@@ -76,10 +76,9 @@ class Constant:
         Returns:
             bool: True if both constants have the same value and type, False otherwise.
         """
-        if not isinstance(other, Constant):
-            return NotImplemented
-        return self.__int_value == other.__int_value and self.__str_value == other.__str_value
-
+        if isinstance(other, Constant):
+            return self.__int_value == other.__int_value if self.__int_value is not None else self.__str_value == other.__str_value
+        return False
     def __lt__(self, other) -> bool:
         """
         Check if this Constant is less than another Constant.

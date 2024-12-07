@@ -164,10 +164,17 @@ class TableScan(UpdateScan):
         self.__current_slot = self.__rp.next_after(self.__current_slot)
         while self.__current_slot < 0:
             if self.__at_last_block():
+                # print(f"In TableScan next, False returned.")
                 return False
             next_block_num = self.__rp.block.number + 1
             self.__move_to_block(next_block_num)
-            self.__current_slot = self.__rp.next_after(self.__current_slot)
+            # print(f"next calling next-after")
+            cs = self.__rp.next_after(self.__current_slot)
+            # print(f"next-after returned value is {cs}")
+            self.__current_slot = cs
+            # print(f"in next after next_after, self.__current_slot sat to {self.__current_slot}")
+
+        # print("In next, True returned.")
         return True
 
     def get_int(self, field_name: str) -> int:
@@ -276,6 +283,8 @@ class TableScan(UpdateScan):
         Returns:
             bool: True if the current block is the last block, False otherwise.
         """
+        # print(f"block number is {self.__rp.block.number}")
+        # print(f"size is {self.__tx.size(self.__table_file_name)}")
         return self.__rp.block.number == self.__tx.size(self.__table_file_name) - 1
 
     @property

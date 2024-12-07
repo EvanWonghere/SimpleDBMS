@@ -38,7 +38,7 @@ class Schema:
 
         """
         self.__fields: List[str] = []
-        self.__info: Dict[str, FieldInfo] = {}
+        self.__infos: Dict[str, FieldInfo] = {}
 
     def add_field(self, field_name: str, field_info: FieldInfo):
         """
@@ -53,11 +53,11 @@ class Schema:
         Raises:
             ValueError: If the field name already exists in the schema.
         """
-        if field_name in self.__info:
+        if field_name in self.__infos:
             raise ValueError(f"Field '{field_name}' already exists in the schema.")
         # print(f"Field {field_name} add to schema")
         self.__fields.append(field_name)
-        self.__info[field_name] = field_info
+        self.__infos[field_name] = field_info
 
     def add_int_field(self, field_name: str):
         """
@@ -120,14 +120,14 @@ class Schema:
         return self.__fields.copy()
 
     @property
-    def info(self) -> Dict[str, FieldInfo]:
+    def infos(self) -> Dict[str, FieldInfo]:
         """
         Get the mapping of field names to their FieldInfo.
 
         Returns:
             Dict[str, FieldInfo]: A dictionary mapping field names to FieldInfo.
         """
-        return self.__info.copy()
+        return self.__infos.copy()
 
     def has_field(self, field_name: str) -> bool:
         """
@@ -155,7 +155,7 @@ class Schema:
             KeyError: If the field does not exist in the schema.
         """
         if self.has_field(field_name):
-            return self.__info[field_name].type
+            return self.__infos[field_name].type
         else:
             raise KeyError(f"Field '{field_name}' not found in the schema.")
 
@@ -173,6 +173,6 @@ class Schema:
             KeyError: If the field does not exist in the schema.
         """
         if self.has_field(field_name):
-            return self.__info[field_name].length
+            return self.__infos[field_name].length
         else:
             raise KeyError(f"Field '{field_name}' not found in the schema.")
