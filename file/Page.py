@@ -178,5 +178,5 @@ class Page:
             ValueError: If the data length exceeds the buffer size.
         """
         if len(data) > len(self.__bb):
-            raise ValueError("Data length exceeds the buffer size.")
+            raise ValueError("data length exceeds the buffer size.")
         self.__bb[:len(data)] = data
