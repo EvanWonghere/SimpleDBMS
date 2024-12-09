@@ -1,13 +1,10 @@
-# -*- coding: utf-8 -*-
-# @Time    : 2024/12/2 17:22
-# @Author  : EvanWong
-# @File    : SimpleDB.py
-# @Project : TestDB
-
-
-from file.FileMgr import FileMgr
 from buffer.BufferMgr import BufferMgr
+from file.FileMgr import FileMgr
 from log.LogMgr import LogMgr
+from metadata.MetadataMgr import MetadataMgr
+from plan.BasicQueryPlanner import BasicQueryPlanner
+from plan.BasicUpdatePlanner import BasicUpdatePlanner
+from plan.Planner import Planner
 from tx.Transaction import Transaction
 
 
@@ -28,6 +25,10 @@ class SimpleDB:
             else:
                 print("recovering existing database")
                 tx.recover()
+            self.__mdm = MetadataMgr(isnew, tx)
+            qp = BasicQueryPlanner(self.__mdm)
+            up = BasicUpdatePlanner(self.__mdm)
+            self.__planner = Planner(qp, up)
             tx.commit()
         else:
             self.__fm = FileMgr(dirname, blocksize)
@@ -37,6 +38,12 @@ class SimpleDB:
     def newTx(self) -> Transaction:
         return Transaction(self.__fm, self.__lm, self.__bm)
 
+    def mdMgr(self) -> MetadataMgr:
+        return self.__mdm
+
+    def planner(self) -> Planner:
+        return self.__planner
+
     def fileMgr(self) -> FileMgr:
         return self.__fm
 
@@ -45,4 +52,3 @@ class SimpleDB:
 
     def bufferMgr(self) -> BufferMgr:
         return self.__bm
-

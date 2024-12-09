@@ -141,6 +141,19 @@ class Schema:
         """
         return field_name in self.__fields
 
+    def get_field_info(self, field_name: str) -> FieldInfo:
+        """
+        Retrieve the type of one specified field.
+
+        Args:
+            field_name (str): The name of the field.
+
+        Returns:
+            FieldInfo: The information about the field.
+
+        """
+        return self.__infos[field_name]
+
     def get_field_type(self, field_name: str) -> FieldType:
         """
         Retrieve the type of one specified field.

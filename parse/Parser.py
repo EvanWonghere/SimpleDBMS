@@ -161,7 +161,7 @@ class Parser:
     def create_table_data(self) -> CreateTableData:
         self.__lexer.eat_keyword("table")
         table_name = self.__lexer.eat_id()
-        self.__lexer.eat_keyword("(")
+        self.__lexer.eat_delim("(")
         schema = self.__field_definitions
         self.__lexer.eat_delim(')')
         return CreateTableData(table_name, schema)
