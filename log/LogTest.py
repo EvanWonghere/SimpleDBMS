@@ -18,7 +18,7 @@ def print_log_records(log_manager: LogMgr, message: str):
         message (str): A message to display before printing the log records.
     """
     print(message)
-    iterator = log_manager.iterator()
+    iterator = log_manager.iterator
     if not iterator.has_next():
         print("No records in the log file.")
         return

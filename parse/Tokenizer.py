@@ -8,7 +8,7 @@ class Tokenizer:
 
     def __init__(self, input_string: str):
         self.__tokens: list[str] = re.findall(r"\w+|[^\w\s]", input_string)
-        print(f"intput: {input_string}, find: {self.__tokens}")
+        # print(f"intput: {input_string}, find: {self.__tokens}")
         self.__index: int = 0
         self.int_value: int = 0
         self.str_value: str = None

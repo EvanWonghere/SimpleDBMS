@@ -35,7 +35,7 @@ class BasicUpdatePlanner(UpdatePlanner):
     def execute_delete(self, data: DeleteData, tx: Transaction) -> int:
         plan = TablePlan(tx, data.table_name, self.__mdm)
         plan = SelectPlan(plan, data.predicate)
-        us: UpdateScan = plan.open
+        us: UpdateScan = plan.open()
 
         count = 0
         while us.next():
@@ -46,7 +46,7 @@ class BasicUpdatePlanner(UpdatePlanner):
     def execute_modify(self, data: ModifyData, tx: Transaction) -> int:
         plan = TablePlan(tx, data.table_name, self.__mdm)
         plan = SelectPlan(plan, data.predicate)
-        us: UpdateScan = plan.open
+        us: UpdateScan = plan.open()
 
         count = 0
         while us.next():

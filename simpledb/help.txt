@@ -1,0 +1,23 @@
+创建表：create table 表名 (字段名 字段类型)
+示例：create table student (id int, name varchar(20))
+
+插入数据：insert into 表名 (字段名) values (要插入的数据)
+示例：insert into student (id, name) values (1, 'aa')
+
+删除数据：delete from 表名 where 条件谓词 或者 delete from 表名
+示例：delete from student where id=1
+
+修改数据：update 表名 set 字段名=修改后的值 where 条件谓词
+示例：update student set name='bb' where id=1
+
+查询数据：select 字段名 from 表名
+示例：select id, name from student
+
+创建视图：create view 视图名 as 查询语句
+示例：create view testview as select id, name from student
+
+通过视图查询数据：select 字段名 from 视图名
+示例：select id, name from testview
+
+创建索引：create index 索引名 on 表名 (字段名)
+示例：create index testindex on student (id)
