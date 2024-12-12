@@ -3,7 +3,6 @@
 # @Author  : EvanWong
 # @File    : Schema.py
 # @Project : TestDB
-
 from dataclasses import dataclass
 from typing import List, Dict
 
@@ -83,16 +82,6 @@ class Schema:
             raise ValueError("String field length must be positive.")
         self.add_field(field_name, FieldInfo(type=FieldType.STRING, length=length))
 
-    def add(self, field_name: str, info: FieldInfo):
-        """
-        Add a field to the schema with specified field information.
-
-        Args:
-            field_name (str): The name of the field.
-            info (FieldInfo): The information about the field.
-        """
-        self.add_field(field_name, info)
-
     def add_all(self, fields: List[str], infos: Dict[str, FieldInfo]):
         """
         Add multiple fields to the schema at once.
@@ -105,7 +94,7 @@ class Schema:
             ValueError: If any field name in `fields` already exists in the schema.
         """
         for field in fields:
-            if field not in infos:
+            if field not in infos.keys():
                 raise KeyError(f"Field info for '{field}' is missing.")
             self.add_field(field, infos[field])
 
@@ -117,7 +106,7 @@ class Schema:
         Returns:
             List[str]: A list of field names.
         """
-        return self.__fields.copy()
+        return self.__fields
 
     @property
     def infos(self) -> Dict[str, FieldInfo]:
@@ -127,7 +116,7 @@ class Schema:
         Returns:
             Dict[str, FieldInfo]: A dictionary mapping field names to FieldInfo.
         """
-        return self.__infos.copy()
+        return self.__infos
 
     def has_field(self, field_name: str) -> bool:
         """
@@ -152,7 +141,10 @@ class Schema:
             FieldInfo: The information about the field.
 
         """
-        return self.__infos[field_name]
+        if field_name in self.__infos.keys():
+            return self.__infos[field_name]
+        else:
+            raise KeyError(f"Field '{field_name}' does not exist in the schema.")
 
     def get_field_type(self, field_name: str) -> FieldType:
         """

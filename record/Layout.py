@@ -46,12 +46,12 @@ class Layout:
 
         # If both offset and slot_size are provided, use them
         if (offset is not None) and (slot_size is not None):
-            self.__offset = offset.copy()
+            self.__offset = offset
             self.__slot_size = slot_size
         elif (offset is None) and (slot_size is None):
             # Compute offsets based on the schema
             pos = 4  # Starting position after the flag (assuming 4 bytes for flag)
-            for field in schema.fields:
+            for field in self.__schema.fields:
                 self.__offset[field] = pos
                 pos += self.__length_in_bytes(field)
             self.__slot_size = pos

@@ -9,6 +9,9 @@ from file.FileMgr import FileMgr
 from file.Page import Page
 from log.LogIterator import LogIterator
 
+
+#TODO: Log Page structure.
+
 class LogMgr:
     """
     Log manager responsible for managing log file entries.
@@ -33,14 +36,15 @@ class LogMgr:
             fm (FileMgr): The file manager to manage the log file.
             logfile (str): The name of the log file.
         """
-        self.__fm = fm
+        self.__fm: FileMgr = fm
         self.__logfile = logfile
-        self.__log_page = Page(bytearray(fm.block_size))  # Buffer to hold log records
+        self.__log_page: Page = Page(bytearray(self.__fm.block_size))  # Buffer to hold log records
 
         # Check if the log file already exists.
-        log_size: int = fm.length(logfile)
+        log_size: int = fm.block_amount(logfile)
         if log_size != 0:
-            # If the log file is empty, initialize the first block.
+            # If the log file is not empty,
+            # then read the latest block to log page.
             self.__current_blk = BlockID(logfile, log_size - 1)
             fm.read(self.__current_blk, self.__log_page)
         else:
@@ -90,8 +94,8 @@ class LogMgr:
             int: The Log Sequence Number (LSN) of the appended record.
         """
         boundary = self.__log_page.get_int(0)  # Get the position of the last written record
-        recsize = len(log_rec)  # The size of the log record
-        bytes_needed = recsize + 4  # We need 4 extra bytes for boundary information
+        rec_size = len(log_rec)  # The size of the log record
+        bytes_needed = rec_size + 4  # We need 4 extra bytes for boundary information
 
         if boundary - bytes_needed < 4:  # If there isn't enough space in the current block
             self.__flush()  # Flush the current block to disk

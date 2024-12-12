@@ -79,7 +79,7 @@ if __name__ == "__main__":
     bm = BufferMgr(fm, lm, 8)
     blk0 = BlockID("testfile", 0)
     blk1 = BlockID("testfile", 1)
-    if fm.length("testfile") == 0:
+    if fm.block_amount("testfile") == 0:
         init()
         modify()
     else:

@@ -8,6 +8,9 @@ import struct
 import typing
 import datetime
 
+
+# TODO: Add Page structure.
+
 class Page:
     """Represents a data page in memory.
 
@@ -29,7 +32,7 @@ class Page:
         Args:
             b (Union[int, bytearray]): If int, initializes an empty buffer of that size. If bytearray, initializes the buffer with the given data.
         """
-        self.__bb = bytearray(b)
+        self.__bb: bytearray = bytearray(b)
 
     def get_int(self, offset: int) -> int:
         """Reads an integer from the buffer at the specified offset.
@@ -77,7 +80,7 @@ class Page:
         self.set_int(offset, length)
         self.__bb[start_position: start_position + length] = b
 
-    def get_string(self, offset: int) -> str:
+    def get_string(self, offset: int) -> str | None:
         """Reads a string from the buffer at the specified offset.
 
         Args:
@@ -100,7 +103,7 @@ class Page:
             offset (int): The offset within the buffer to start writing.
             s (str): The string to be written.
         """
-        b = s.encode(self.__CHARSET)
+        b = bytearray(s.encode(self.__CHARSET))
         self.set_bytes(offset, b)
 
     def set_float(self, offset: int, value: float):

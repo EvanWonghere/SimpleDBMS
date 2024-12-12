@@ -3,6 +3,8 @@ from abc import ABC, abstractmethod
 from tx.recovery.RecordType import RecordType
 
 
+# TODO: Recovery Log Page Structure.
+
 class LogRecord(ABC):
     """The base class for all log records.
 

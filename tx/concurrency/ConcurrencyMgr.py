@@ -3,10 +3,11 @@
 # @Author  : EvanWong
 # @File    : ConcurrencyMgr.py
 # @Project : TestDB
-import time
 from file.BlockID import BlockID
 from tx.concurrency.LockTable import LockTable
 
+
+# TODO: Logics about acquiring X/S lock.
 
 class ConcurrencyMgr:
     """Concurrency manager for transactions.
@@ -43,7 +44,6 @@ class ConcurrencyMgr:
             if not self.__lock_table.s_lock(blk):  # Attempt to acquire the S lock from the global lock table
                 return False  # Lock acquisition failed
             self.__locks[blk] = "S"  # Mark the block as locked with an S lock
-            return True
         return True  # Block is already locked by this transaction, can't acquire again
 
     def x_lock(self, blk: BlockID) -> bool:
@@ -75,7 +75,6 @@ class ConcurrencyMgr:
                 self.__locks.pop(blk, None)
                 return False  # X lock acquisition failed
             self.__locks[blk] = "X"  # Successfully upgraded to X lock
-            return True
         return True  # Already have an exclusive lock
 
     def release(self):

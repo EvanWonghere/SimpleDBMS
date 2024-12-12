@@ -3,11 +3,12 @@
 # @Author  : EvanWong
 # @File    : BufferList.py
 # @Project : TestDB
-
 from buffer.Buffer import Buffer
 from buffer.BufferMgr import BufferMgr
 from file.BlockID import BlockID
 
+
+# TODO: Safe unpin.
 
 class BufferList:
     """ Manage the buffers pinned by a transaction.

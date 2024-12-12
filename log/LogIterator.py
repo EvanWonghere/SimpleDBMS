@@ -16,7 +16,7 @@ class LogIterator:
     Attributes:
         __fm (FileMgr): The file manager used to read the log file.
         __blk (BlockID): The current block being read.
-        __p (Page): The page buffer containing the log block data.
+        __page (Page): The page buffer containing the log block data.
         __current_pos (int): The current position within the block.
         __boundary (int): The location of the last written record within the block.
     """
@@ -29,9 +29,9 @@ class LogIterator:
             fm (FileMgr): The file manager to read the log file.
             blk (BlockID): The starting block to begin reading from.
         """
-        self.__fm = fm
-        self.__blk = blk
-        self.__p = Page(bytearray(fm.block_size))  # Buffer to store log block data
+        self.__fm: FileMgr = fm
+        self.__blk: BlockID = blk
+        self.__page: Page = Page(bytearray(fm.block_size))  # Buffer to store log block data
         self.__current_pos = 0  # Start from the beginning of the block
         self.__boundary = 0  # The position of the last written record in the block
         # Move to the provided block and initialize its content
@@ -74,7 +74,7 @@ class LogIterator:
             self.__move_to_block(self.__blk)
 
         # Retrieve the current log record from the block's buffer.
-        rec: bytearray = self.__p.get_bytes(self.__current_pos)
+        rec: bytearray = self.__page.get_bytes(self.__current_pos)
         # Move to the next record position (record length + 4 for boundary info).
         self.__current_pos += len(rec) + 4
 
@@ -87,6 +87,6 @@ class LogIterator:
         Args:
             blk (BlockID): The block to move to.
         """
-        self.__fm.read(blk, self.__p)  # Read the block data into the page buffer
-        self.__boundary = self.__p.get_int(0)  # Get the boundary location of the last written record
+        self.__fm.read(blk, self.__page)  # Read the block data into the page buffer
+        self.__boundary = self.__page.get_int(0)  # Get the boundary location of the last written record
         self.__current_pos = self.__boundary  # Start from the last written record in the block

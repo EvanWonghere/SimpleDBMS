@@ -35,17 +35,17 @@ class RecordUtil:
         op_code = RecordType(p.get_int(0))
 
         # Handle each record type and create the appropriate log record.
-        if op_code == RecordType.CHECKPOINT:
+        if op_code == RecordType.CHECKPOINT.value:
             return CheckPointRecord()
-        elif op_code == RecordType.START:
+        elif op_code == RecordType.START.value:
             return StartRecord(p)
-        elif op_code == RecordType.COMMIT:
+        elif op_code == RecordType.COMMIT.value:
             return CommitRecord(p)
-        elif op_code == RecordType.ROLLBACK:
+        elif op_code == RecordType.ROLLBACK.value:
             return RollbackRecord(p)
-        elif op_code == RecordType.SET_INT:
+        elif op_code == RecordType.SET_INT.value:
             return SetIntRecord(p)
-        elif op_code == RecordType.SET_STRING:
+        elif op_code == RecordType.SET_STRING.value:
             return SetStringRecord(p)
         else:
             print(f"Unrecognized log operation code: {op_code}")

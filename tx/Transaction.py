@@ -104,7 +104,7 @@ class Transaction:
         dummy_blk = BlockID(filename, self.__EOF)
         if not self.__cm.s_lock(dummy_blk):
             raise InterruptedError("Unable to acquire shared lock on file.")
-        return self.__fm.length(filename)
+        return self.__fm.block_amount(filename)
 
     def append(self, filename: str) -> BlockID:
         """ Append a new block to a file. """
