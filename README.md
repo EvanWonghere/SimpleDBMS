@@ -21,3 +21,8 @@ The implemented DBMS includes the following features:
   - Logging for transactions.
   - Rollback and recovery mechanisms.
   - Concurrency control for safe multi-transaction environments.
+
+## Todo:
+- ***Refactor and rewrite the simpledb package.***
+- ***Add comments to all scripts.***
+- ***See `#TODO` in the project.***
