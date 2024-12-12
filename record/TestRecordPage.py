@@ -11,15 +11,15 @@ from Schema import Schema
 from RecordPage import RecordPage
 
 
-db = SimpleDB("recordtest", 400, 8)
-tx = db.newTx()
+db = SimpleDB("record_test", 400, 8)
+tx = db.new_tx
 sch = Schema()
 sch.add_int_field("A")
 sch.add_string_field("B", 9)
 layout = Layout(sch)
-for fldname in layout.schema.fields:
-    offset = layout.get_offset(fldname)
-    print(fldname, "has offset ", offset)
+for field_name in layout.schema.fields:
+    offset = layout.get_offset(field_name)
+    print(field_name, "has offset ", offset)
 blk = tx.append("testfile")
 tx.pin(blk)
 rp = RecordPage(tx, blk, layout)

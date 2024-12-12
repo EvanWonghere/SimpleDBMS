@@ -26,23 +26,23 @@ class A:
     @staticmethod
     def run():
         try:
-            txA = Transaction(fm, lm, bm)
+            tx_a = Transaction(fm, lm, bm)
             print("Before block")
             blk1 = BlockID("testfile", 1)
             blk2 = BlockID("testfile", 2)
             print("Before pin")
-            txA.pin(blk1)
-            txA.pin(blk2)
-            print("Tx A: request slock 1")
-            txA.get_int(blk1, 0)
-            print("Tx A: receive slock 1")
+            tx_a.pin(blk1)
+            tx_a.pin(blk2)
+            print("Tx A: request s_lock 1")
+            tx_a.get_int(blk1, 0)
+            print("Tx A: receive s_lock 1")
             time.sleep(1)
-            print("Tx A: request slock 2")
-            txA.get_int(blk2, 0)
-            print("Tx A: receive slock 2")
-            txA.commit()
+            print("Tx A: request s_lock 2")
+            tx_a.get_int(blk2, 0)
+            print("Tx A: receive s_lock 2")
+            tx_a.commit()
             print("Tx A: commit")
-        except Exception as e:
+        except InterruptedError:
             print("Dead Lock")
 
 
@@ -53,21 +53,21 @@ class B:
     @staticmethod
     def run():
         try:
-            txB = Transaction(fm, lm, bm)
+            tx_b = Transaction(fm, lm, bm)
             blk1 = BlockID("testfile", 1)
             blk2 = BlockID("testfile", 2)
-            txB.pin(blk1)
-            txB.pin(blk2)
+            tx_b.pin(blk1)
+            tx_b.pin(blk2)
             print("Tx B: request xlock 2")
-            txB.set_int(blk2, 0, 0, False)
+            tx_b.set_int(blk2, 0, 0, False)
             print("Tx B: receive xlock 2")
             time.sleep(1)
-            print("Tx B: request slock 1")
-            txB.get_int(blk1, 0)
-            print("Tx B: receive slock 1")
-            txB.commit()
+            print("Tx B: request s_lock 1")
+            tx_b.get_int(blk1, 0)
+            print("Tx B: receive s_lock 1")
+            tx_b.commit()
             print("Tx B: commit")
-        except Exception as e:
+        except InterruptedError:
             print("Dead Lock")
 
 
@@ -78,22 +78,22 @@ class C:
     @staticmethod
     def run():
         try:
-            txC = Transaction(fm, lm, bm)
+            tx_c = Transaction(fm, lm, bm)
             blk1 = BlockID("testfile", 1)
             blk2 = BlockID("testfile", 2)
-            txC.pin(blk1)
-            txC.pin(blk2)
+            tx_c.pin(blk1)
+            tx_c.pin(blk2)
             time.sleep(1)
             print("Tx C: request xlock 1")
-            txC.set_int(blk1, 0, 0, False)
+            tx_c.set_int(blk1, 0, 0, False)
             print("Tx C: receive xlock 1")
             time.sleep(1)
-            print("Tx C: request slock 2")
-            txC.get_int(blk2, 0)
-            print("Tx C: receive slock 2")
-            txC.commit()
+            print("Tx C: request s_lock 2")
+            tx_c.get_int(blk2, 0)
+            print("Tx C: receive s_lock 2")
+            tx_c.commit()
             print("Tx C: commit")
-        except Exception as e:
+        except InterruptedError:
             print("Dead Lock")
 
 

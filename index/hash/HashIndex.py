@@ -3,6 +3,8 @@
 # @Author  : EvanWong
 # @File    : HashIndex.py
 # @Project : TestDB
+from typing import Optional
+
 from index.Index import Index
 from query.Constant import Constant
 from record.Layout import Layout
@@ -19,8 +21,8 @@ class HashIndex(Index):
         self.__tx: Transaction = tx
         self.__index_name: str = index_name
         self.__layout: Layout = layout
-        self.__search_key: Constant = None
-        self.__ts: TableScan = None
+        self.__search_key: Optional[Constant] = None
+        self.__ts: Optional[TableScan] = None
 
     def before_first(self, search_key: Constant):
         self.close()
@@ -37,8 +39,8 @@ class HashIndex(Index):
 
     def get_data_rid(self) -> RID:
         blk = self.__ts.get_int("block")
-        id = self.__ts.get_int("id")
-        return RID(blk, id)
+        identification = self.__ts.get_int("id")
+        return RID(blk, identification)
 
     def insert(self, data_value: Constant, data_rid: RID):
         self.before_first(self.__search_key)

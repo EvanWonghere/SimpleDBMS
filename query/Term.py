@@ -4,12 +4,16 @@
 # @File    : Term.py
 # @Project : TestDB
 import math
+from typing import Optional
 
 from plan.Plan import Plan
 from query.Constant import Constant
 from query.Expression import Expression
 from query.Scan import Scan
 from record.Schema import Schema
+
+
+# TODO: Be able to compare "or".
 
 
 class Term:
@@ -21,12 +25,12 @@ class Term:
         __RHS (Expression): The right-hand-side of the expression.
     """
 
-    def __init__(self, LHS: Expression, RHS: Expression):
-        self.__LHS: Expression = LHS
-        self.__RHS: Expression = RHS
+    def __init__(self, lhs: Expression, rhs: Expression):
+        self.__LHS: Expression = lhs
+        self.__RHS: Expression = rhs
 
     def __str__(self):
-        return f"{self.__LHS} -> {self.__RHS}"
+        return f"{self.__LHS} = {self.__RHS}"
 
     def is_satisfied(self, s: Scan) -> bool:
         lhs_value: Constant = self.__LHS.evaluate(s)
@@ -47,28 +51,22 @@ class Term:
                 return 1
             return int(math.inf)
 
-    def equates_with_constant(self, field_name: str) -> Constant | None:
+    def equates_with_constant(self, field_name: str) -> Optional[Constant]:
         # One of them must be field name and another must be constant.
         if self.__LHS.is_field_name ^ self.__RHS.is_field_name:
             if self.__LHS.is_field_name and self.__LHS.as_field_name == field_name:
                 return self.__RHS.as_constant
             elif self.__RHS.is_field_name and self.__RHS.as_field_name == field_name:
                 return self.__LHS.as_constant
-            else:
-                return None
-        else:
-            return None
+        return None
 
-    def equates_with_field(self, field_name: str) -> str | None:
+    def equates_with_field(self, field_name: str) -> Optional[str]:
         if self.__LHS.is_field_name and self.__RHS.is_field_name:
             if self.__LHS.as_field_name == field_name:
                 return self.__RHS.as_field_name
             elif self.__RHS.as_field_name == field_name:
                 return self.__LHS.as_field_name
-            else:
-                return None
-        else:
-            return None
+        return None
 
     def applies_to(self, schema: Schema) -> bool:
         return self.__LHS.applies_to(schema) and self.__RHS.applies_to(schema)

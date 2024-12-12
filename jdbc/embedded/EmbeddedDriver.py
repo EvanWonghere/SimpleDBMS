@@ -8,6 +8,7 @@ from simpledb.SimpleDB import SimpleDB
 
 
 class EmbeddedDriver:
-    def connect(self, db_name: str) -> EmbeddedConnection:
+    @staticmethod
+    def connect(db_name: str) -> EmbeddedConnection:
         db = SimpleDB(db_name)
         return EmbeddedConnection(db)

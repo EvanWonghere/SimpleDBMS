@@ -9,7 +9,17 @@ from record.Schema import Schema
 
 
 class Expression:
+    """Interfaces relevant to SQL expression.
+
+    Attributes:
+        __value (Constant): Value of the expression.
+        __field_name (str): Field name of the expression.
+    """
+
     def __init__(self, value: Constant=None, field_name: str=None):
+        """
+        self.__value and self.__field_name are exclusive.
+        """
         self.__value: Constant = value
         self.__field_name: str = field_name
 

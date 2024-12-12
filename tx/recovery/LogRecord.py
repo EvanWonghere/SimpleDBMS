@@ -10,6 +10,19 @@ class LogRecord(ABC):
     Log records are used for transaction management and recovery, and each log record represents
     a specific operation or transaction event.
 
+    The structure of the commit record and rollback record is as follows:
+        - Store 2 numbers, takes 8 bytes,
+        - first one is the RecordType,
+        - second one is the transaction id.
+
+    The structure of the set int/float/string record is as follows:
+        - First two numbers are same as above,
+        - then stores
+            - the name of file,
+            - the block number,
+            - the offset inside the block,
+            - the sat value.
+
     Attributes:
         _TYPE_POS (int): The position where the log type is stored.
         _TX_POS (int): The position where the transaction number is stored.

@@ -11,11 +11,21 @@ from tx.Transaction import Transaction
 
 
 class StatMgr:
+    """The manager to manage the statistical information.
+    To keep and refresh the information rather than store them, and there's no need to.
+
+    Attributes:
+        __MAX_CALLS_NUM (int): The maximum number of calls to execute.
+
+        __tm (TableMgr): The TableMgr instance.
+        __calls_num (int): The number of calls to execute.
+        __table_stats (dict[str, StatInfo]): The table statistics.
+    """
 
     __MAX_CALLS_NUM = 100
 
     def __init__(self, tm: TableMgr, tx: Transaction):
-        self.__tm = tm
+        self.__tm: TableMgr = tm
         self.__calls_num = 0
         self.__table_stats: dict[str, StatInfo] = {}
         self.__refresh_stats(tx)
@@ -33,8 +43,6 @@ class StatMgr:
         self.__table_stats[table_name] = info
         # print(f"Calculated table stats: {info}")
         return info
-
-
 
     def __refresh_stats(self, tx: Transaction):
         # print("Get into refresh stats")

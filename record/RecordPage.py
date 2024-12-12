@@ -18,6 +18,12 @@ class RecordPage:
     including setting and getting integer and string fields, deleting records,
     formatting the block, and navigating through slots.
 
+    The structure of the page is as follows:
+        - The blocks in the page divided into slots with given size.
+        - Inside the slot, first stores an integer, representing whether this slot is used or not,
+        - then stores the id of this slot,
+        - finally stores the field data.
+
     Attributes:
         EMPTY (int): Identifier for an empty slot.
         USED (int): Identifier for a used slot.

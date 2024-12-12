@@ -16,7 +16,7 @@ class Constant:
     Attributes:
         __int_value (int | None): The integer value if the stored value is an int; otherwise, None.
         __str_value (str | None): The string value if the stored value is a str; otherwise, None.
-        __float_value(float | None): The float value if the stored value is an float; otherwise, None.
+        __float_value(float | None): The float value if the stored value is a float; otherwise, None.
     """
     def __init__(self, value: Union[int, str, float]):
         """
@@ -41,7 +41,7 @@ class Constant:
             self.__str_value = None
             self.__float_value = value
         else:
-            raise TypeError("Constant value must be either int or str")
+            raise TypeError("Constant value must be int or str or float.")
 
     def as_int(self) -> int:
         """

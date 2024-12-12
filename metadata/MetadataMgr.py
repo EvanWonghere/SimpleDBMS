@@ -15,13 +15,24 @@ from tx.Transaction import Transaction
 
 
 class MetadataMgr:
+    """The metadata manager.
+    This is the only for client to acquire the metadata,
+    the relevant managers were hidden and the interfaces were simplified.
+
+    Attributes:
+        __tm (TableMgr): The TableMgr instance.
+        __vm(ViewMgr): The ViewMgr instance.
+        __sm(StatMgr): The StatMgr instance.
+        __im(IndexMgr): The IndexMgr instance.
+    """
+
     def __init__(self, is_new: bool, tx: Transaction):
-        self.__tm = TableMgr(is_new, tx)
-        self.__vm = ViewMgr(is_new, self.__tm, tx)
+        self.__tm: TableMgr = TableMgr(is_new, tx)
+        self.__vm: ViewMgr = ViewMgr(is_new, self.__tm, tx)
         # print("\n**************************************************************8888")
         # print("Start StatMgr init")
-        self.__sm = StatMgr(self.__tm, tx)
-        self.__im = IndexMgr(is_new, self.__tm, self.__sm, tx)
+        self.__sm: StatMgr = StatMgr(self.__tm, tx)
+        self.__im: IndexMgr = IndexMgr(is_new, self.__tm, self.__sm, tx)
 
     def create_table(self, table_name: str, schema: Schema, tx: Transaction):
         self.__tm.create_table(table_name, schema, tx)

@@ -6,23 +6,35 @@
 from metadata.IndexInfo import IndexInfo
 from metadata.StatMgr import StatMgr
 from metadata.TableMgr import TableMgr
+from record.Layout import Layout
 from record.Schema import Schema
 from record.TableScan import TableScan
 from tx.Transaction import Transaction
 
+# TODO: Add BTree index.
 
 class IndexMgr:
+    """The index manager.
+
+    Attributes:
+        __tm (TableMgr): The table manager.
+        __sm (StatMgr): The stat_info manager.
+        __layout (Layout): The layout of index.
+
+    """
+
     def __init__(self, is_new: bool, tm: TableMgr, sm: StatMgr, tx: Transaction):
+        self.__tm: TableMgr = tm
+        self.__sm: StatMgr = sm
+
         if is_new:
             schema = Schema()
             schema.add_string_field("index_name", TableMgr.MAX_NAME_LENGTH)
             schema.add_string_field("table_name", TableMgr.MAX_NAME_LENGTH)
             schema.add_string_field("field_name", TableMgr.MAX_NAME_LENGTH)
-            tm.create_table("index_cat", schema, tx)
+            self.__tm.create_table("index_cat", schema, tx)
 
-        self.__tm = tm
-        self.__sm = sm
-        self.__layout = self.__tm.get_layout("index_cat", tx)
+        self.__layout: Layout = self.__tm.get_layout("index_cat", tx)
 
     def create_index(self, index_name: str, table_name: str, field_name: str, tx:Transaction):
         ts = TableScan(tx, "index_cat", self.__layout)
@@ -31,7 +43,7 @@ class IndexMgr:
         ts.set_string("index_name", index_name)
         ts.set_string("table_name", table_name)
         ts.set_string("field_name", field_name)
-        s = ts.get_string("field_name")
+        # s = ts.get_string("field_name")
         # print(f"TS field name sat? {s}")
         ts.close()
 

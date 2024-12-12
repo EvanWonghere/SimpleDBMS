@@ -13,7 +13,7 @@ from file.BlockID import BlockID
 from file.Page import Page
 
 
-def printValues(msg):
+def print_values(msg):
     print(msg)
     p0 = Page(fm.block_size)
     p1 = Page(fm.block_size)
@@ -44,7 +44,7 @@ def init():
     tx2.set_string(blk1, 30, "def", False)
     tx1.commit()
     tx2.commit()
-    printValues("After Init")
+    print_values("After Init")
 
 
 def modify():
@@ -62,15 +62,15 @@ def modify():
     tx4.set_string(blk1, 30, "xyz", True)
     bm.flush_all(3)
     bm.flush_all(4)
-    printValues("After modification")
+    print_values("After modification")
     tx3.rollback()
-    printValues("After rollback")
+    print_values("After rollback")
 
 
 def recover():
     tx = Transaction(fm, lm, bm)
     tx.recover()
-    printValues("After recovery")
+    print_values("After recovery")
 
 
 if __name__ == "__main__":
@@ -79,7 +79,7 @@ if __name__ == "__main__":
     bm = BufferMgr(fm, lm, 8)
     blk0 = BlockID("testfile", 0)
     blk1 = BlockID("testfile", 1)
-    if fm.length("testfile") == 0:
+    if fm.block_num("testfile") == 0:
         init()
         modify()
     else:

@@ -3,15 +3,14 @@
 # @Author  : EvanWong
 # @File    : Lexer.py
 # @Project : TestDB
-from typing import Collection
+from typing import Collection, Optional
 
 from parse.BadSyntaxException import BadSyntaxException
 from parse.Tokenizer import Tokenizer
 
-
 class Lexer:
     def __init__(self, input_string: str):
-        self.__keywords: Collection[str] = None
+        self.__keywords: Optional[Collection[str]] = None
         self.__init_keywords()
         self.__tokenizer = Tokenizer(input_string)
         self.__next_token()
@@ -39,7 +38,8 @@ class Lexer:
         # print(f"Value matched? {self.__tokenizer.str_value not in self.__keywords}")
         # print(f"Current value: {self.__tokenizer.str_value}")
         # print(f"Current keyword: {self.__keywords}")
-        return self.__tokenizer.token_type == self.__tokenizer.TT_WORD and self.__tokenizer.str_value not in self.__keywords
+        return self.__tokenizer.token_type == self.__tokenizer.TT_WORD\
+            and self.__tokenizer.str_value not in self.__keywords
 
     def eat_delim(self, delim: str):
         if not self.match_delim(delim):

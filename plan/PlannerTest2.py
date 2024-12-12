@@ -9,8 +9,8 @@ from simpledb.SimpleDB import SimpleDB
 
 
 db = SimpleDB("plannertest2")
-tx = db.newTx()
-planner = db.planner()
+tx = db.new_tx
+planner = db.planner
 cmd = "create table T1 (A int, B varchar(9))"
 planner.execute_update(cmd, tx)
 n = 100

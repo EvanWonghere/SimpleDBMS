@@ -3,10 +3,9 @@
 # @Author  : EvanWong
 # @File    : BufferMgr.py
 # @Project : TestDB
-
-import random
 import time
 from collections import OrderedDict
+from typing import Optional
 
 from buffer.Buffer import Buffer
 from buffer.BufferAbortException import BufferAbortException
@@ -123,7 +122,7 @@ class BufferMgr:
         """
         return time.time() - start_time > self.__MAX_TIME
 
-    def __try_pin(self, blk: BlockID) -> Buffer | None:
+    def __try_pin(self, blk: BlockID) -> Optional[Buffer]:
         """
         Tries to pin a block by finding an existing buffer or allocating a new one.
 
@@ -148,7 +147,7 @@ class BufferMgr:
         self.__buffer_pool.move_to_end(buff, last=False)
         return buff
 
-    def __find_existing_buffer(self, blk: BlockID) -> Buffer | None:
+    def __find_existing_buffer(self, blk: BlockID) -> Optional[Buffer]:
         """
         Finds a buffer that already contains the specified block.
 
@@ -165,7 +164,7 @@ class BufferMgr:
                 return buff
         return None
 
-    def __choose_unpinned_buffer(self) -> Buffer | None:
+    def __choose_unpinned_buffer(self) -> Optional[Buffer]:
         """
         Selects an unpinned buffer for replacement using the LRU strategy.
 

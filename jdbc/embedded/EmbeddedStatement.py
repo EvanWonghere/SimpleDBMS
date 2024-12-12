@@ -21,7 +21,7 @@ class EmbeddedStatement:
             tx = self.__embedded_connection.get_transaction()
             plan = self.__planner.create_query_plan(query, tx)
             return EmbeddedResultSet(plan, self.__embedded_connection)
-        except (RuntimeError, BadSyntaxException, ValueError) as e:
+        except (RuntimeError, BadSyntaxException, ValueError, KeyError) as e:
             self.__embedded_connection.rollback()
             raise Error(e)
 

@@ -31,18 +31,17 @@ class Transaction:
     def commit(self):
         """ Commit the transaction, making all changes permanent. """
         self.__rm.commit()
-        self.__perform_transaction_action(self.__rm.commit, "Committing")
+        self.__perform_transaction_action("Committing")
 
     def rollback(self):
         """ Rollback the transaction, undoing all changes. """
         self.__rm.rollback(self)
-        self.__perform_transaction_action(self.__rm.rollback, "Rolling back")
+        self.__perform_transaction_action("Rolling back")
 
-    def __perform_transaction_action(self, action: callable, action_message: str):
+    def __perform_transaction_action(self, action_message: str):
         """ Perform a commit or rollback action for the transaction.
 
         Args:
-            action (callable): The commit or rollback method from the RecoveryMgr.
             action_message (str): The action's message to print.
         """
         print(f"{action_message} transaction {self.__tx_num}")
@@ -120,7 +119,7 @@ class Transaction:
         dummy_blk = BlockID(filename, self.__EOF)
         if not self.__cm.s_lock(dummy_blk):
             raise InterruptedError("Unable to acquire shared lock on file.")
-        return self.__fm.length(filename)
+        return self.__fm.block_num(filename)
 
     def append(self, filename: str) -> BlockID:
         """ Append a new block to a file. """

@@ -84,7 +84,7 @@ class RecoveryMgr:
         self.__lm.flush(lsn)
 
     def set_int(self, buff: Buffer, offset: int) -> int:
-        """Set an integer value in the database and log the operation.
+        """Write the set int record to log.
 
         Args:
             buff (Buffer): The buffer containing the block to modify.
@@ -97,7 +97,7 @@ class RecoveryMgr:
         return SetIntRecord.write_to_log(self.__lm, self.__tx_num, buff.block, offset, val)
 
     def set_string(self, buff: Buffer, offset: int) -> int:
-        """Set a string value in the database and log the operation.
+        """Write the set string record to log.
 
         Args:
             buff (Buffer): The buffer containing the block to modify.
@@ -110,8 +110,7 @@ class RecoveryMgr:
         return SetStringRecord.write_to_log(self.__lm, self.__tx_num, buff.block, offset, val)
 
     def set_float(self, buff: Buffer, offset: int) -> int:
-        """
-        Set a float value in the database and log the operation.
+        """Write the set float record to log.
 
         Args:
             buff (Buffer): The buffer containing the block to modify.

@@ -3,8 +3,6 @@
 # @Author  : EvanWong
 # @File    : ScanTest2.py
 # @Project : TestDB
-
-
 from simpledb.SimpleDB import SimpleDB
 from record.Schema import Schema
 from record.Layout import Layout
@@ -18,7 +16,7 @@ from query.ProductScan import ProductScan
 
 
 db = SimpleDB("scantest2")
-tx = db.newTx()
+tx = db.new_tx
 
 sch1 = Schema()
 sch1.add_int_field("A")

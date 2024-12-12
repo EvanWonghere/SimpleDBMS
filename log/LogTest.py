@@ -9,16 +9,16 @@ from file.FileMgr import FileMgr
 from file.Page import Page
 
 
-def print_log_records(log_manager: LogMgr, message: str):
+def print_log_records(lm: LogMgr, message: str):
     """
     Print all log records from the log file.
 
     Args:
-        log_manager (LogMgr): The log manager responsible for managing log records.
+        lm (LogMgr): The log manager responsible for managing log records.
         message (str): A message to display before printing the log records.
     """
     print(message)
-    iterator = log_manager.iterator
+    iterator = lm.iterator
     if not iterator.has_next():
         print("No records in the log file.")
         return
@@ -53,26 +53,26 @@ def create_log_record(string_value: str, int_value: int) -> bytearray:
     return bytearray(page.content)
 
 
-def initialize_log_manager(directory: str, block_size: int, logfile: str) -> LogMgr:
+def initialize_log_manager(directory: str, blk_size: int, logfile: str) -> LogMgr:
     """
     Initialize the FileMgr and LogMgr instances.
 
     Args:
         directory (str): The directory to store the log files.
-        block_size (int): The size of each block in bytes.
+        blk_size (int): The size of each block in bytes.
         logfile (str): The name of the log file.
 
     Returns:
         LogMgr: An instance of LogMgr.
     """
-    file_manager = FileMgr(directory, block_size)
-    log_manager = LogMgr(file_manager, logfile)
-    return log_manager
+    file_manager = FileMgr(directory, blk_size)
+    lm = LogMgr(file_manager, logfile)
+    return lm
 
 
 if __name__ == "__main__":
     # Initialize the log manager
-    log_directory = "logtest"
+    log_directory = "log_test"
     block_size = 400
     log_file = "simpledb.log"
 

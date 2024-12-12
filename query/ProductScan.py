@@ -10,6 +10,14 @@ from query.Scan import Scan
 
 
 class ProductScan(Scan):
+    """
+    The scan class relevant to product.
+
+    Attributes:
+        __LHS_scan (Scan): The scan of left-hand side.
+        __RHS_scan (Scan): The scan of right-hand side.
+    """
+
     def __init__(self, lhs_scan: Scan, rhs_scan: Scan):
         self.__LHS_scan: Scan = lhs_scan
         self.__RHS_scan: Scan = rhs_scan

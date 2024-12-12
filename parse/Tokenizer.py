@@ -3,6 +3,7 @@ from typing import Union, Optional
 
 
 class Tokenizer:
+    # Token types
     TT_EOF = -1
     TT_NUMBER = -2
     TT_WORD = -3
@@ -32,7 +33,7 @@ class Tokenizer:
                 self.float_value = float(token)
                 self.int_value = 0
                 self.str_value = None
-            elif self.__judge_alpha(token.replace('_', '')):
+            elif self.__is_string(token):
                 self.token_type = self.TT_WORD
                 self.str_value = token
                 self.int_value = 0
@@ -55,14 +56,16 @@ class Tokenizer:
 
         return self.token_type
 
-    def __is_float(self, token: str) -> bool:
+    @staticmethod
+    def __is_float(token: str) -> bool:
         try:
             float(token)
             return '.' in token
         except ValueError:
             return False
 
-    def __judge_alpha(self, token: str) -> bool:
+    @staticmethod
+    def __is_string(token: str) -> bool:
         return token.isalnum() and not token.isdigit()
 
     def __extract_quoted_string(self, quote_char: str) -> str:

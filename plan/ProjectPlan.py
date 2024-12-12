@@ -13,7 +13,7 @@ class ProjectPlan(Plan):
         self.__plan = plan
         self.__schema = Schema()
         for field in fields:
-            self.__schema.add(field, self.__plan.schema().get_field_info(field))
+            self.__schema.add_field(field, self.__plan.schema().get_field_info(field))
 
     def open(self) -> ProjectScan:
         scan = self.__plan.open()

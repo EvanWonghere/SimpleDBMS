@@ -12,15 +12,15 @@ from Layout import Layout
 from TableScan import TableScan
 
 
-db = SimpleDB("tabletest", 400, 8)
-tx = db.newTx()
+db = SimpleDB("table_test", 400, 8)
+tx = db.new_tx
 sch = Schema()
 sch.add_int_field("A")
 sch.add_string_field("B", 9)
 layout = Layout(sch)
-for fldname in layout.schema.fields:
-    offset = layout.get_offset(fldname)
-    print(fldname, "has offset", offset)
+for field_name in layout.schema.fields:
+    offset = layout.get_offset(field_name)
+    print(field_name, "has offset", offset)
 print("Filling the table with 50 random records.")
 ts = TableScan(tx, "T", layout)
 for i in range(50):

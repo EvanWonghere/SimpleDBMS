@@ -6,6 +6,7 @@
 
 import io
 import os
+
 from file.BlockID import BlockID
 from file.Page import Page
 
@@ -35,8 +36,8 @@ class FileMgr:
         self.__db_directory = db_directory
         self.__block_size = block_size
         self.__is_new = not os.path.exists(db_directory)
-        self.__opened_files = {}
-        self.__cache = {}  # Cache for recently read blocks
+        self.__opened_files: [str, io.BufferedRandom] = {}
+        self.__cache: [BlockID, bytearray] = {}  # Cache for recently read blocks
 
         if self.__is_new:
             os.makedirs(db_directory)  # Create the directory if it doesn't exist.
@@ -75,7 +76,7 @@ class FileMgr:
             try:
                 f = self.__get_file(blk.filename)
                 f.seek(blk.number * self.__block_size)  # Seek to the block's position
-                buffer = f.read(self.__block_size)  # Read the block's data into a buffer
+                buffer = bytearray(f.read(self.__block_size))  # Read the block's data into a buffer
                 p.write_content(buffer)  # Write the data into the Page object
 
                 # Cache the read content for future access
@@ -125,7 +126,7 @@ class FileMgr:
         Raises:
             IOError: If an error occurs when unable to append a new block.
         """
-        new_blk_num: int = self.length(filename)  # Get the current number of blocks in the file
+        new_blk_num: int = self.block_num(filename)  # Get the current number of blocks in the file
         blk: BlockID = BlockID(filename, new_blk_num)  # Create a new block ID
         b: bytearray = bytearray(self.__block_size)  # Create an empty byte array for the block content
 
@@ -162,7 +163,7 @@ class FileMgr:
             self.__opened_files[filename] = f
         return f
 
-    def length(self, filename: str) -> int:
+    def block_num(self, filename: str) -> int:
         """
         Returns the number of blocks required to store the specified file.
 

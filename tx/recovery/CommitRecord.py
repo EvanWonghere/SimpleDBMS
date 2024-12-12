@@ -40,6 +40,6 @@ class CommitRecord(LogRecord):
         """
         rec = bytearray(2 * 4) # Store 2 int, one for record type, another for transaction number.
         p = Page(rec)
-        p.set_int(0, RecordType.COMMIT.value)
-        p.set_int(4, tx_num)
+        p.set_int(CommitRecord._TYPE_POS, RecordType.COMMIT.value)
+        p.set_int(CommitRecord._TX_POS, tx_num)
         return lm.append(p.content)

@@ -3,6 +3,7 @@
 # @Author  : EvanWong
 # @File    : Buffer.py
 # @Project : TestDB
+from typing import Optional
 
 from file.BlockID import BlockID
 from file.FileMgr import FileMgr
@@ -35,7 +36,7 @@ class Buffer:
             fm (FileMgr): The file manager for block I/O operations.
             lm (LogMgr): The log manager for managing log records.
         """
-        self.__blk: BlockID = None
+        self.__blk: Optional[BlockID] = None
         self.__pins: int = 0
         self.__tx_num: int = -1  # Indicates no transaction is currently modifying this buffer
         self.__lsn: int = -1  # Indicates no log record has been written

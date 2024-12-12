@@ -18,7 +18,7 @@ from query.ProjectScan import ProjectScan
 import random
 
 db = SimpleDB("scantest1")
-tx = db.newTx()
+tx = db.new_tx
 
 sch1 = Schema()
 sch1.add_int_field("A")

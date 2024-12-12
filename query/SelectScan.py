@@ -11,6 +11,14 @@ from record.RID import RID
 
 
 class SelectScan(UpdateScan):
+    """
+    The scan class relevant to select.
+
+    Attributes:
+        __scan (Scan): The base scan.
+        __predicate (Predicate): The predicate.
+    """
+
     def __init__(self, s: Scan, predicate: Predicate):
         self.__scan = s
         self.__predicate = predicate

@@ -36,6 +36,8 @@ class Parser:
             return Constant(self.__lexer.eat_str_constant())
         elif self.__lexer.match_float_constant():
             return Constant(self.__lexer.eat_float_constant())
+        else:
+            raise ValueError("Unknown constant")
 
     @property
     def expression(self) -> Expression:
@@ -48,6 +50,7 @@ class Parser:
         lhs = self.expression
         self.__lexer.eat_delim('=')
         rhs = self.expression
+
         return Term(lhs, rhs)
 
     @property
@@ -63,15 +66,17 @@ class Parser:
         fields = self.__select_list
         self.__lexer.eat_keyword("from")
         tables = self.__table_list
+
         predicate = Predicate()
         if self.__lexer.match_keyword("where"):
             self.__lexer.eat_keyword("where")
             predicate = self.predicate
+
         return QueryData(fields, tables, predicate)
 
     @property
     def __select_list(self) -> list[str]:
-        sl = [self.field]
+        sl: list[str] = [self.field]
         if self.__lexer.match_delim(','):
             self.__lexer.eat_delim(',')
             sl.extend(self.__select_list)
@@ -94,9 +99,11 @@ class Parser:
             return self.delete_data
         elif self.__lexer.match_keyword("update"):
             return self.modify_data
-        else:
+        elif self.__lexer.match_keyword("create"):
             # print("Into else")
             return self.__create_data
+        else:
+            raise ValueError("Unknown command")
 
     @property
     def __create_data(self) -> Union[CreateTableData, CreateViewData, CreateIndexData]:
@@ -107,31 +114,39 @@ class Parser:
             return self.create_table_data
         elif self.__lexer.match_keyword("view"):
             return self.create_view_data
-        return self.create_index_data
+        elif self.__lexer.match_keyword("index"):
+            return self.create_index_data
+        else:
+            raise ValueError("Unknown command")
 
     @property
     def delete_data(self) -> DeleteData:
         self.__lexer.eat_keyword("delete")
         self.__lexer.eat_keyword("from")
         table_name = self.__lexer.eat_id()
+
         predicate = Predicate()
         if self.__lexer.match_keyword("where"):
             self.__lexer.eat_keyword("where")
             predicate = self.predicate
+
         return DeleteData(table_name, predicate)
 
     @property
     def insert_data(self) -> InsertData:
         self.__lexer.eat_keyword("insert")
         self.__lexer.eat_keyword("into")
+
         table_name = self.__lexer.eat_id()
         self.__lexer.eat_delim('(')
         fields = self.__field_list
         self.__lexer.eat_delim(')')
+
         self.__lexer.eat_keyword("values")
         self.__lexer.eat_delim('(')
         values = self.__constant_list
         self.__lexer.eat_delim(')')
+
         return InsertData(table_name, fields, values)
 
     @property
@@ -154,20 +169,24 @@ class Parser:
     def modify_data(self) -> ModifyData:
         self.__lexer.eat_keyword("update")
         table_name = self.__lexer.eat_id()
+
         self.__lexer.eat_keyword("set")
         field_name = self.field
         self.__lexer.eat_delim('=')
         new_value = self.expression
+
         predicate = Predicate()
         if self.__lexer.match_keyword("where"):
             self.__lexer.eat_keyword("where")
             predicate = self.predicate
+
         return ModifyData(table_name, field_name, new_value, predicate)
 
     @property
     def create_table_data(self) -> CreateTableData:
-        self.__lexer.eat_keyword("table")
+        self.__lexer.eat_keyword("table") # "create" was eaten.
         table_name = self.__lexer.eat_id()
+
         self.__lexer.eat_delim("(")
         # print("into definition")
         schema = self.__field_definitions
@@ -183,6 +202,7 @@ class Parser:
             self.__lexer.eat_delim(',')
             new_schema = self.__field_definitions
             schema.add_all(new_schema.fields, new_schema.infos)
+
         return schema
 
     @property
@@ -204,23 +224,27 @@ class Parser:
         elif self.__lexer.match_keyword("float"):
             self.__lexer.eat_keyword("float")
             schema.add_float_field(field_name)
+
         return schema
 
     @property
     def create_view_data(self) -> CreateViewData:
-        self.__lexer.eat_keyword("view")
+        self.__lexer.eat_keyword("view") # "create" was eaten.
         view_name = self.__lexer.eat_id()
         self.__lexer.eat_keyword("as")
         query_data = self.query_data()
+
         return CreateViewData(view_name, query_data)
 
     @property
     def create_index_data(self) -> CreateIndexData:
-        self.__lexer.eat_keyword("index")
+        self.__lexer.eat_keyword("index") # "create" was eaten.
         index_name = self.__lexer.eat_id()
+
         self.__lexer.eat_keyword("on")
         table_name = self.__lexer.eat_id()
         self.__lexer.eat_delim('(')
         field_name = self.field
         self.__lexer.eat_delim(')')
+
         return CreateIndexData(index_name, table_name, field_name)

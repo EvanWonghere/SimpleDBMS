@@ -55,7 +55,7 @@ class BufferList:
         Args:
             blk (BlockID): The BlockID to unpin.
         """
-        buff = self.__buffers.pop(blk, None)  # 安全地移除 blk，并避免 KeyError
+        buff = self.__buffers.pop(blk, None) # 安全地移除 blk，并避免 KeyError
         if buff:
             self.__bm.unpin(buff)
         if blk in self.__pins:

@@ -61,7 +61,7 @@ class BlockID:
         """Returns a string representation of the BlockID.
 
         Returns:
-            str: String representation in the format "[file: {filename}, block: {blknum}]".
+            str: String representation in the format "[file: {filename}, block: {blk_num}]".
         """
         return f"[file: {self.__filename}, block: {self.__blk_num}]"
 

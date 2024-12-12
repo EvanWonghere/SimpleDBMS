@@ -3,6 +3,8 @@
 # @Author  : EvanWong
 # @File    : Predicate.py
 # @Project : TestDB
+from typing import Optional
+
 from plan.Plan import Plan
 from query.Constant import Constant
 from query.Scan import Scan
@@ -11,6 +13,9 @@ from record.Schema import Schema
 
 
 class Predicate:
+    """
+    Combination of terms.
+    """
     def __init__(self, t: Term=None):
         self.__terms: list[Term] = []
         if t is not None:
@@ -56,14 +61,14 @@ class Predicate:
 
         return res if len(res.__terms) > 0 else None
 
-    def equates_with_constant(self, field_name: str) -> Constant | None:
+    def equates_with_constant(self, field_name: str) -> Optional[Constant]:
         for term in self.__terms:
             c: Constant = term.equates_with_constant(field_name)
             if c is not None:
                 return c
         return None
 
-    def equates_with_field(self, field_name: str) -> str | None:
+    def equates_with_field(self, field_name: str) -> Optional[str]:
         for term in self.__terms:
             c: str = term.equates_with_field(field_name)
             if c is not None:

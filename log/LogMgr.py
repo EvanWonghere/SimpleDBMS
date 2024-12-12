@@ -16,6 +16,12 @@ class LogMgr:
     This class handles writing log entries to a log file, managing log blocks,
     and provides an iterator for traversing the log in reverse order.
 
+    The structure of the log file is as follows:
+        - The blocks to log follows increment order,
+        - the log record inside the block follows reverse order.
+        - The start position of each block stores an int value, representing the start position of the last log,
+        - the start position of each log record stores an int value, representing the size of the log data in bytes.
+
     Attributes:
         __fm (FileMgr): The file manager used to manage the log file.
         __logfile (str): The name of the log file.
@@ -33,14 +39,15 @@ class LogMgr:
             fm (FileMgr): The file manager to manage the log file.
             logfile (str): The name of the log file.
         """
-        self.__fm = fm
-        self.__logfile = logfile
-        self.__log_page = Page(bytearray(fm.block_size))  # Buffer to hold log records
+        self.__fm: FileMgr = fm
+        self.__logfile: str = logfile
+        self.__log_page: Page = Page(bytearray(fm.block_size))  # Buffer to hold log records
 
         # Check if the log file already exists.
-        log_size: int = fm.length(logfile)
+        log_size: int = fm.block_num(logfile)
         if log_size != 0:
-            # If the log file is empty, initialize the first block.
+            # If the log file is empty,
+            # then read the latest block to log page.
             self.__current_blk = BlockID(logfile, log_size - 1)
             fm.read(self.__current_blk, self.__log_page)
         else:
@@ -50,16 +57,16 @@ class LogMgr:
         self.__latest_LSN = 0  # The latest LSN (Log Sequence Number)
         self.__last_saved_LSN = 0  # The last saved LSN
 
-    def flush(self, LSN: int):
+    def flush(self, lsn: int):
         """
         Flushes the log file to disk if the LSN is greater than or equal to the latest LSN.
 
         This ensures that the log is saved up to the latest valid record.
 
         Args:
-            LSN (int): The Log Sequence Number to check against.
+            lsn (int): The Log Sequence Number to check against.
         """
-        if LSN >= self.__latest_LSN:
+        if lsn >= self.__latest_LSN:
             self.__flush()  # Flush the current log page to disk
 
     @property
@@ -90,10 +97,10 @@ class LogMgr:
             int: The Log Sequence Number (LSN) of the appended record.
         """
         boundary = self.__log_page.get_int(0)  # Get the position of the last written record
-        recsize = len(log_rec)  # The size of the log record
-        bytes_needed = recsize + 4  # We need 4 extra bytes for boundary information
+        rec_size = len(log_rec)  # The size of the log record
+        bytes_needed = rec_size + 4  # We need 4 extra bytes for boundary information
 
-        if boundary - bytes_needed < 4:  # If there isn't enough space in the current block
+        if boundary - bytes_needed < 4:  # We need at least 4 bytes to store the position of last log.
             self.__flush()  # Flush the current block to disk
             self.__current_blk = self.append_new_block()  # Create a new block and get the new block ID
             boundary = self.__log_page.get_int(0)  # Get the new boundary location

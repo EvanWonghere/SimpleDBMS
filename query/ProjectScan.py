@@ -8,9 +8,17 @@ from query.Scan import Scan
 
 
 class ProjectScan(Scan):
+    """
+    The scan class relevant to project.
+
+    Attributes:
+        __scan (Scan): The base scan.
+        __fields (list[str]): The list of fields to scan.
+    """
+
     def __init__(self, s: Scan, fields: list[str]):
-        self.__scan = s
-        self.__fields = fields
+        self.__scan: Scan = s
+        self.__fields: list[str] = fields
 
     def before_first(self):
         return self.__scan.before_first()

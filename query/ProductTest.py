@@ -3,15 +3,14 @@
 # @Author  : EvanWong
 # @File    : ProductTest.py
 # @Project : TestDB
-
 from simpledb.SimpleDB import SimpleDB
 from record.Schema import Schema
 from record.Layout import Layout
 from record.TableScan import TableScan
 from query.ProductScan import ProductScan
 
-db = SimpleDB("producttest")
-tx = db.newTx()
+db = SimpleDB("product_test")
+tx = db.new_tx
 sch1 = Schema()
 sch1.add_int_field("A")
 sch1.add_string_field("B", 9)

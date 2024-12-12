@@ -16,6 +16,10 @@ class Page:
     A page is a buffer of data used to read/write blocks from/to disk. It supports various data types
     like integers, bytes, strings, floats, and dates.
 
+    Usually, the data stored in the page follows the rules below:
+        - Start position stores an int value, representing the length of the real data part stored in bytes.
+        - Then follows the given bytes of data.
+
     Attributes:
         __CHARSET (str): The character encoding used for strings. Defaults to 'utf-8'.
         __bb (bytearray): The internal buffer storing the page data.
@@ -31,7 +35,7 @@ class Page:
         Args:
             b (Union[int, bytearray]): If int, initializes an empty buffer of that size. If bytearray, initializes the buffer with the given data.
         """
-        self.__bb = bytearray(b)
+        self.__bb: bytearray = bytearray(b)
 
     def get_int(self, offset: int) -> int:
         """Reads an integer from the buffer at the specified offset.

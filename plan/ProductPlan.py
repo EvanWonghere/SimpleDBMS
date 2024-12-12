@@ -3,6 +3,8 @@
 # @Author  : EvanWong
 # @File    : ProductPlan.py
 # @Project : TestDB
+from typing import Optional
+
 from plan.Plan import Plan
 from query.ProductScan import ProductScan
 from record.Schema import Schema
@@ -27,7 +29,7 @@ class ProductPlan(Plan):
     def output_records(self) -> int:
         return self.__plan1.output_records() * self.__plan2.output_records()
 
-    def distinct_values(self, field_name: str) -> int | None:
+    def distinct_values(self, field_name: str) -> Optional[int]:
         if self.__plan1.schema().has_field(field_name):
             return self.__plan1.distinct_values(field_name)
         elif self.__plan2.schema().has_field(field_name):
