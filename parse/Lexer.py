@@ -11,7 +11,8 @@ from parse.Tokenizer import Tokenizer
 
 class Lexer:
     def __init__(self, input_string: str):
-        self.__keywords: Collection[str] = self.__init_keywords()
+        self.__keywords: Collection[str] = None
+        self.__init_keywords()
         self.__tokenizer = Tokenizer(input_string)
         self.__next_token()
 
@@ -23,6 +24,9 @@ class Lexer:
 
     def match_str_constant(self) -> bool:
         return self.__tokenizer.token_type in ("'", '"')
+
+    def match_float_constant(self) -> bool:
+        return self.__tokenizer.token_type == self.__tokenizer.TT_FLOAT
 
     def match_keyword(self, word: str) -> bool:
         # print(f"Type matched? {self.__tokenizer.token_type == self.__tokenizer.TT_WORD}")
@@ -39,6 +43,7 @@ class Lexer:
 
     def eat_delim(self, delim: str):
         if not self.match_delim(delim):
+            print(f"delim not matched, current is {self.__tokenizer.str_value}")
             raise BadSyntaxException
         self.__next_token()
 
@@ -48,6 +53,13 @@ class Lexer:
         int_value = self.__tokenizer.int_value
         self.__next_token()
         return int_value
+
+    def eat_float_constant(self) -> float:
+        if not self.match_float_constant():
+            raise BadSyntaxException
+        float_value = self.__tokenizer.float_value
+        self.__next_token()
+        return float_value
 
     def eat_str_constant(self) -> str:
         if not self.match_str_constant():
@@ -74,8 +86,12 @@ class Lexer:
         except RuntimeError:
             raise BadSyntaxException
 
-    def __init_keywords(self) -> list[str]:
-        return ["select", "from", "where", "and",
-                "insert", "into", "values", "delete", "update", "set",
-                "create", "table", "int", "varchar",
-                "view", "as", "index", "on", "tables", "show"]
+    def __init_keywords(self):
+        self.__keywords = ["select", "from", "where", "and",
+                           "insert", "into", "values",
+                           "delete", "update", "set",
+                           "create", "table",
+                           "int", "varchar", "float",
+                           "view", "as",
+                           "index", "on",
+                           "tables", "show"]

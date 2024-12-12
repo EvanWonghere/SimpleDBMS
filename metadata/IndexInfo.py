@@ -46,6 +46,8 @@ class IndexInfo:
 
         if self.__table_schema.get_field_type(self.__field_name) is FieldType.INT:
             schema.add_int_field("data_value")
+        elif self.__table_schema.get_field_type(self.__field_name) is FieldType.FLOAT:
+            schema.add_float_field("data_value")
         else:
             length = self.__table_schema.get_field_length(self.__field_name)
             schema.add_string_field("data_value", length)

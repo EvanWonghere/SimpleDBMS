@@ -3,7 +3,7 @@
 # @Author  : EvanWong
 # @File    : Parser.py
 # @Project : TestDB
-from typing import Collection
+from typing import Collection, Union
 
 from parse.Lexer import Lexer
 from parse.data.CreateIndexData import CreateIndexData
@@ -32,7 +32,10 @@ class Parser:
     def constant(self) -> Constant:
         if self.__lexer.match_int_constant():
             return Constant(self.__lexer.eat_int_constant())
-        return Constant(self.__lexer.eat_str_constant())
+        elif self.__lexer.match_str_constant():
+            return Constant(self.__lexer.eat_str_constant())
+        elif self.__lexer.match_float_constant():
+            return Constant(self.__lexer.eat_float_constant())
 
     @property
     def expression(self) -> Expression:
@@ -83,7 +86,8 @@ class Parser:
         return tl
 
     def update_command(self)\
-            -> InsertData | DeleteData | ModifyData | CreateTableData | CreateViewData | CreateIndexData:
+            -> Union[InsertData, DeleteData, ModifyData, CreateTableData, CreateViewData, CreateIndexData]:
+        # print("Start match keyword")
         if self.__lexer.match_keyword("insert"):
             return self.insert_data
         elif self.__lexer.match_keyword("delete"):
@@ -91,12 +95,15 @@ class Parser:
         elif self.__lexer.match_keyword("update"):
             return self.modify_data
         else:
+            # print("Into else")
             return self.__create_data
 
     @property
-    def __create_data(self) -> CreateTableData | CreateViewData | CreateIndexData:
+    def __create_data(self) -> Union[CreateTableData, CreateViewData, CreateIndexData]:
         self.__lexer.eat_keyword("create")
+        # print("Start create data")
         if self.__lexer.match_keyword("table"):
+            # print("table matched")
             return self.create_table_data
         elif self.__lexer.match_keyword("view"):
             return self.create_view_data
@@ -162,8 +169,11 @@ class Parser:
         self.__lexer.eat_keyword("table")
         table_name = self.__lexer.eat_id()
         self.__lexer.eat_delim("(")
+        # print("into definition")
         schema = self.__field_definitions
+        # print(f"end definition, definitions are {schema.fields}, {schema.infos}")
         self.__lexer.eat_delim(')')
+        # print("createTableData returned")
         return CreateTableData(table_name, schema)
 
     @property
@@ -185,12 +195,15 @@ class Parser:
         if self.__lexer.match_keyword("int"):
             self.__lexer.eat_keyword("int")
             schema.add_int_field(field_name)
-        else:
+        elif self.__lexer.match_keyword("varchar"):
             self.__lexer.eat_keyword("varchar")
             self.__lexer.eat_delim('(')
             str_len = self.__lexer.eat_int_constant()
             self.__lexer.eat_delim(')')
             schema.add_string_field(field_name, str_len)
+        elif self.__lexer.match_keyword("float"):
+            self.__lexer.eat_keyword("float")
+            schema.add_float_field(field_name)
         return schema
 
     @property

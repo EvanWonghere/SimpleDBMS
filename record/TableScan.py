@@ -3,6 +3,7 @@
 # @Author  : EvanWong
 # @File    : TableScan.py
 # @Project : TestDB
+from typing import Optional
 
 from file.BlockID import BlockID
 from query.Constant import Constant
@@ -38,8 +39,8 @@ class TableScan(UpdateScan):
         self.__layout: Layout = layout
         self.__table_file_name: str = table_name + self.TABLE_FILE_SUFFIX
 
-        self.__rp: RecordPage = None  # Current RecordPage
-        self.__current_slot: int = None  # Current slot number
+        self.__rp: Optional[RecordPage] = None  # Current RecordPage
+        self.__current_slot: Optional[int] = None  # Current slot number
 
         # Initialize the scan by moving to the first block or creating a new block if table is empty
         if tx.size(self.__table_file_name) == 0:
@@ -65,6 +66,8 @@ class TableScan(UpdateScan):
             self.__rp.set_int(self.__current_slot, field_name, value.as_int())
         elif field_type == FieldType.STRING:
             self.__rp.set_string(self.__current_slot, field_name, value.as_str())
+        elif field_type == FieldType.FLOAT:
+            self.__rp.set_float(self.__current_slot, field_name, value.as_float())
         else:
             raise ValueError(f"Unsupported FieldType '{field_type}' for field '{field_name}'.")
 
@@ -80,6 +83,19 @@ class TableScan(UpdateScan):
             KeyError: If the field name does not exist in the schema.
         """
         self.__rp.set_int(self.__current_slot, field_name, value)
+
+    def set_float(self, field_name: str, value: float):
+        """
+        Set a float value for a specified field in the current record.
+
+        Args:
+            field_name (str): The name of the field to set.
+            value (float): The float value to set.
+
+        Raises:
+            KeyError: If the field name does not exist in the schema.
+        """
+        self.__rp.set_float(self.__current_slot, field_name, value)
 
     def set_string(self, field_name: str, value: str):
         """
@@ -161,10 +177,12 @@ class TableScan(UpdateScan):
             bool: True if a next record is found, False if the end of the table is reached.
         """
         # print(f"In TableScan.next(), current_slot is {self.__current_slot}")
+        # print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
         self.__current_slot = self.__rp.next_after(self.__current_slot)
+        # print(f"Before next while, current slot is {self.__current_slot}， current table is {self.__table_file_name}")
         while self.__current_slot < 0:
             if self.__at_last_block():
-                # print(f"In TableScan next, False returned.")
+                # print(f"In TableScan next, at last block, False returned.")
                 return False
             next_block_num = self.__rp.block.number + 1
             self.__move_to_block(next_block_num)
@@ -207,6 +225,18 @@ class TableScan(UpdateScan):
         """
         return self.__rp.get_string(self.__current_slot, field_name)
 
+    def get_float(self, field_name: str) -> float:
+        """
+        Get a float value from a specified field in the current record.
+
+        Args:
+            field_name (str): The name of the field to retrieve.
+
+        Returns:
+            float: The float value of the specified field.
+        """
+        return self.__rp.get_float(self.__current_slot, field_name)
+
     def get_value(self, field_name: str) -> Constant:
         """
         Get the value of a specified field in the current record as a Constant.
@@ -225,6 +255,8 @@ class TableScan(UpdateScan):
             return Constant(self.get_int(field_name))
         elif field_type == FieldType.STRING:
             return Constant(self.get_string(field_name))
+        elif field_type == FieldType.FLOAT:
+            return Constant(self.get_float(field_name))
         else:
             raise ValueError(f"Unsupported FieldType '{field_type}' for field '{field_name}'.")
 

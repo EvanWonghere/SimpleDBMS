@@ -11,20 +11,20 @@ class BlockID:
 
     Attributes:
         __filename (str): The name of the file where the block is stored.
-        __blknum (int): The block number within the file.
+        __blk_num (int): The block number within the file.
 
     """
 
-    def __init__(self, filename: str, blknum: int):
+    def __init__(self, filename: str, blk_num: int):
         """
         Initializes a BlockID with the given filename and block number.
 
         Args:
             filename (str): The name of the file where the block is stored.
-            blknum (int): The block number within the file.
+            blk_num (int): The block number within the file.
         """
         self.__filename = filename
-        self.__blknum = blknum
+        self.__blk_num = blk_num
 
     @property
     def filename(self) -> str:
@@ -42,7 +42,7 @@ class BlockID:
         Returns:
             int: The block number.
         """
-        return self.__blknum
+        return self.__blk_num
 
     def __eq__(self, other):
         """Checks if this BlockID is equal to another.
@@ -54,7 +54,7 @@ class BlockID:
             bool: True if the BlockID is the same, False otherwise.
         """
         if isinstance(other, BlockID):
-            return self.__filename == other.__filename and self.__blknum == other.__blknum
+            return self.__filename == other.__filename and self.__blk_num == other.__blk_num
         return False
 
     def __str__(self):
@@ -63,7 +63,7 @@ class BlockID:
         Returns:
             str: String representation in the format "[file: {filename}, block: {blknum}]".
         """
-        return f"[file: {self.__filename}, block: {self.__blknum}]"
+        return f"[file: {self.__filename}, block: {self.__blk_num}]"
 
     def __hash__(self):
         """Returns the hash value of the BlockID.

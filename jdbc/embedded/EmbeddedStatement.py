@@ -21,17 +21,18 @@ class EmbeddedStatement:
             tx = self.__embedded_connection.get_transaction()
             plan = self.__planner.create_query_plan(query, tx)
             return EmbeddedResultSet(plan, self.__embedded_connection)
-        except (RuntimeError, BadSyntaxException) as e:
+        except (RuntimeError, BadSyntaxException, ValueError) as e:
             self.__embedded_connection.rollback()
             raise Error(e)
 
     def execute_update(self, cmd: str) -> int:
         try:
             tx = self.__embedded_connection.get_transaction()
+            # print("Start executing update")
             res = self.__planner.execute_update(cmd, tx)
             self.__embedded_connection.commit()
             return res
-        except (RuntimeError, BadSyntaxException) as e:
+        except (RuntimeError, BadSyntaxException, ValueError) as e:
             self.__embedded_connection.rollback()
             raise Error(e)
 

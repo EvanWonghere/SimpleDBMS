@@ -99,6 +99,22 @@ class Transaction:
         buff.contents.set_string(offset, value)
         buff.set_modified(self.__tx_num, lsn)
 
+    def get_float(self, blk: BlockID, offset: int) -> float:
+        """ Get a float value from a block at a specified offset. """
+        if not self.__cm.s_lock(blk):
+            raise InterruptedError("Unable to acquire shared lock on block.")
+        buff = self.__buffers.get_buffer(blk)
+        return buff.contents.get_float(offset)
+
+    def set_float(self, blk: BlockID, offset: int, value: float, ok_to_log: bool):
+        """ Set a float value in a block at a specified offset. """
+        if not self.__cm.x_lock(blk):
+            raise InterruptedError("Unable to acquire exclusive lock on block.")
+        buff = self.__buffers.get_buffer(blk)
+        lsn = -1 if not ok_to_log else self.__rm.set_float(buff, offset)
+        buff.contents.set_float(offset, value)
+        buff.set_modified(self.__tx_num, lsn)
+
     def size(self, filename: str) -> int:
         """ Get the size of a file by checking its length. """
         dummy_blk = BlockID(filename, self.__EOF)

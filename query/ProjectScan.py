@@ -29,6 +29,11 @@ class ProjectScan(Scan):
             return self.__scan.get_string(field_name)
         raise IndexError(f"Field '{field_name}' does not exist")
 
+    def get_float(self, field_name: str) -> float:
+        if self.has_field(field_name):
+            return self.__scan.get_float(field_name)
+        raise IndexError(f"Field '{field_name}' does not exist")
+
     def get_value(self, field_name: str) -> Constant:
         if self.has_field(field_name):
             return self.__scan.get_value(field_name)

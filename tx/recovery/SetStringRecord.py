@@ -48,7 +48,7 @@ class SetStringRecord(LogRecord):
             tx_num (int): The transaction number.
             blk (BlockID): The block number.
             offset (int): The transaction offset.
-            value (str): The transaction value.
+            value (str): The value.
 
         Returns: The LSN of the new log.
 

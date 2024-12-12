@@ -4,6 +4,7 @@ from tx.recovery.CheckPointRecord import CheckPointRecord
 from tx.recovery.CommitRecord import CommitRecord
 from tx.recovery.RecordType import RecordType
 from tx.recovery.RollbackRecord import RollbackRecord
+from tx.recovery.SetFloatRecord import SetFloatRecord
 from tx.recovery.SetIntRecord import SetIntRecord
 from tx.recovery.SetStringRecord import SetStringRecord
 from tx.recovery.StartRecord import StartRecord
@@ -17,8 +18,9 @@ class RecordUtil:
     """
 
     @staticmethod
-    def create_log_record(b: bytearray) -> Union[
-        CheckPointRecord, StartRecord, CommitRecord, RollbackRecord, SetIntRecord, SetStringRecord, None]:
+    def create_log_record(b: bytearray)\
+            -> Union[CheckPointRecord, StartRecord, CommitRecord, RollbackRecord,
+                        SetIntRecord, SetStringRecord, SetFloatRecord, None]:
         """Create a log record from a byte array.
 
         The byte array `b` is parsed to determine the type of log record and the
@@ -47,6 +49,8 @@ class RecordUtil:
             return SetIntRecord(p)
         elif op_code == RecordType.SET_STRING:
             return SetStringRecord(p)
+        elif op_code == RecordType.SET_FLOAT:
+            return SetFloatRecord(p)
         else:
             print(f"Unrecognized log operation code: {op_code}")
             return None

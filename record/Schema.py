@@ -44,7 +44,7 @@ class Schema:
         """
         Add a field to the schema.
 
-        If the field's type is INT, its length is set to 0 by default.
+        If the field's type is INT or FLOAT, its length is set to 0 by default.
 
         Args:
             field_name (str): The name of the field.
@@ -67,6 +67,15 @@ class Schema:
             field_name (str): The name of the integer field.
         """
         self.add_field(field_name, FieldInfo(type=FieldType.INT, length=0))
+
+    def add_float_field(self, field_name: str):
+        """
+        Add a float field to the schema.
+
+        Args:
+            field_name (str): The name of the float field.
+        """
+        self.add_field(field_name, FieldInfo(type=FieldType.FLOAT, length=0))
 
     def add_string_field(self, field_name: str, length: int):
         """
@@ -168,6 +177,7 @@ class Schema:
             KeyError: If the field does not exist in the schema.
         """
         if self.has_field(field_name):
+            # print(f"Field {field_name}'s type is: {self.__infos[field_name]}")
             return self.__infos[field_name].type
         else:
             raise KeyError(f"Field '{field_name}' not found in the schema.")

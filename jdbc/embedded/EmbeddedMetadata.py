@@ -24,5 +24,5 @@ class EmbeddedMetadata:
     def get_column_display_size(self, column: int) -> int:
         field_name = self.get_column_name(column)
         field_type = self.get_column_type(column)
-        field_length = 6 if field_type == FieldType.INT else self.__schema.get_field_length(field_name)
+        field_length = 6 if (field_type == FieldType.INT or field_type == FieldType.FLOAT) else self.__schema.get_field_length(field_name)
         return max(len(field_name), field_length) + 1

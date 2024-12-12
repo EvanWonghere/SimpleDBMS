@@ -53,6 +53,17 @@ class UpdateScan(Scan, ABC):
         pass
 
     @abstractmethod
+    def set_float(self, field_name: str, value: float):
+        """
+        Set a float value for a specified field in the current record.
+
+        Args:
+            field_name (str): The name of the field to set.
+            value (float): The float value to set for the field.
+        """
+        pass
+
+    @abstractmethod
     def insert(self):
         """
         Insert a new record into the database.

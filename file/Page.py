@@ -7,6 +7,8 @@
 import struct
 import typing
 import datetime
+from typing import Optional
+
 
 class Page:
     """Represents a data page in memory.
@@ -77,7 +79,7 @@ class Page:
         self.set_int(offset, length)
         self.__bb[start_position: start_position + length] = b
 
-    def get_string(self, offset: int) -> str:
+    def get_string(self, offset: int) -> Optional[str]:
         """Reads a string from the buffer at the specified offset.
 
         Args:
@@ -100,7 +102,7 @@ class Page:
             offset (int): The offset within the buffer to start writing.
             s (str): The string to be written.
         """
-        b = s.encode(self.__CHARSET)
+        b = bytearray(s.encode(self.__CHARSET))
         self.set_bytes(offset, b)
 
     def set_float(self, offset: int, value: float):

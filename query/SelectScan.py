@@ -15,13 +15,17 @@ class SelectScan(UpdateScan):
         self.__scan = s
         self.__predicate = predicate
 
+    def set_int(self, field_name: str, value: int):
+        us: UpdateScan = self.__scan
+        us.set_int(field_name, value)
+
     def set_value(self, field_name: str, value: Constant):
         us: UpdateScan = self.__scan
         us.set_value(field_name, value)
 
-    def set_int(self, field_name: str, value: int):
+    def set_float(self, field_name: str, value: float):
         us: UpdateScan = self.__scan
-        us.set_int(field_name, value)
+        us.set_float(field_name, value)
 
     def set_string(self, field_name: str, value: str):
         us: UpdateScan = self.__scan
@@ -61,6 +65,9 @@ class SelectScan(UpdateScan):
 
     def get_string(self, field_name: str) -> str:
         return self.__scan.get_string(field_name)
+
+    def get_float(self, field_name: str) -> float:
+        return self.__scan.get_float(field_name)
 
     def get_value(self, field_name: str) -> Constant:
         return self.__scan.get_value(field_name)

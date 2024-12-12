@@ -16,8 +16,9 @@ class Constant:
     Attributes:
         __int_value (int | None): The integer value if the stored value is an int; otherwise, None.
         __str_value (str | None): The string value if the stored value is a str; otherwise, None.
+        __float_value(float | None): The float value if the stored value is an float; otherwise, None.
     """
-    def __init__(self, value: Union[int, str]):
+    def __init__(self, value: Union[int, str, float]):
         """
         Initialize a Constant with either an integer or a string value.
 
@@ -30,9 +31,15 @@ class Constant:
         if isinstance(value, int):
             self.__int_value = value
             self.__str_value = None
+            self.__float_value = None
         elif isinstance(value, str):
             self.__int_value = None
             self.__str_value = value
+            self.__float_value = None
+        elif isinstance(value, float):
+            self.__int_value = None
+            self.__str_value = None
+            self.__float_value = value
         else:
             raise TypeError("Constant value must be either int or str")
 
@@ -66,6 +73,19 @@ class Constant:
         else:
             raise ValueError("Stored value is not a string")
 
+    def as_float(self) -> float:
+        """
+        Retrieve the stored value as a float.
+
+        Returns:
+            float: The float value stored in the Constant.
+
+        Raises:
+            ValueError: If the stored value is not a float.
+        """
+        if self.__float_value is not None:
+            return self.__float_value
+
     def __eq__(self, other) -> bool:
         """
         Check equality between two Constant instances.
@@ -77,8 +97,11 @@ class Constant:
             bool: True if both constants have the same value and type, False otherwise.
         """
         if isinstance(other, Constant):
-            return self.__int_value == other.__int_value if self.__int_value is not None else self.__str_value == other.__str_value
+            return self.__int_value == other.__int_value\
+                and self.__float_value == other.__float_value\
+                and self.__str_value == other.__str_value
         return False
+
     def __lt__(self, other) -> bool:
         """
         Check if this Constant is less than another Constant.
@@ -103,10 +126,12 @@ class Constant:
             return self.__int_value < other.__int_value
         elif self.__str_value is not None and other.__str_value is not None:
             return self.__str_value < other.__str_value
-        elif self.__int_value is not None and other.__str_value is not None:
-            return True  # Define that int < str
-        elif self.__str_value is not None and other.__int_value is not None:
-            return False  # str > int
+        elif self.__float_value is not None and other.__float_value is not None:
+            return self.__float_value < other.__float_value
+        elif self.__int_value is not None and other.__float_value is not None:
+            return self.__int_value < other.__float_value
+        elif self.__float_value is not None and other.__int_value is not None:
+            return self.__float_value < other.__int_value
         else:
             return False
 
@@ -119,7 +144,12 @@ class Constant:
         Returns:
             int: The hash of the stored value.
         """
-        return hash(self.__int_value) if self.__int_value is not None else hash(self.__str_value)
+        if self.__int_value is not None:
+            return hash(self.__int_value)
+        elif self.__float_value is not None:
+            return hash(self.__float_value)
+        else:
+            return hash(self.__str_value)
 
     def __str__(self) -> str:
         """
@@ -128,4 +158,9 @@ class Constant:
         Returns:
             str: The string representation of the stored value.
         """
-        return str(self.__int_value) if self.__int_value is not None else self.__str_value
+        if self.__int_value is not None:
+            return str(self.__int_value)
+        elif self.__float_value is not None:
+            return str(self.__float_value)
+        else:
+            return self.__str_value

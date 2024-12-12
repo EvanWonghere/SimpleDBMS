@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-# @Time    : 2024/11/28 21:00
+# @Time    : 2024/12/12 10:35
 # @Author  : EvanWong
-# @File    : SetIntRecord.py
+# @File    : SetFloatRecord.py
 # @Project : TestDB
 from file.BlockID import BlockID
 from file.Page import Page
@@ -10,7 +10,7 @@ from tx.recovery.LogRecord import LogRecord
 from tx.recovery.RecordType import RecordType
 
 
-class SetIntRecord(LogRecord):
+class SetFloatRecord(LogRecord):
     def __init__(self, p: Page):
         self.__tx_num: int = p.get_int(self._TX_POS)
 
@@ -21,14 +21,14 @@ class SetIntRecord(LogRecord):
 
         self.__blk: BlockID = BlockID(filename, p.get_int(block_pos))
         self.__offset: int = p.get_int(offset_pos)
-        self.__value: int = p.get_int(value_pos)
+        self.__value: float = p.get_float(value_pos)
 
     def __str__(self):
-        return f"< SET_INT {self.__tx_num} {self.__blk} {self.__offset} {self.__value} >"
+        return f"< SET_FLOAT {self.__tx_num} {self.__blk} {self.__offset} {self.__value} >"
 
     @property
     def op(self) -> RecordType:
-        return RecordType.SET_INT
+        return RecordType.SET_FLOAT
 
     @property
     def tx_number(self) -> int:
@@ -36,11 +36,11 @@ class SetIntRecord(LogRecord):
 
     def undo(self, tx):
         tx.pin(self.__blk)
-        tx.set_int(self.__blk, self.__offset, self.__value, False)
+        tx.set_float(self.__blk, self.__offset, self.__value, False)
         tx.unpin(self.__blk)
 
     @staticmethod
-    def write_to_log(lm: LogMgr, tx_num: int, blk: BlockID, offset: int, value: int) -> int:
+    def write_to_log(lm: LogMgr, tx_num: int, blk: BlockID, offset: int, value: float) -> int:
         """
 
         Args:
@@ -48,7 +48,7 @@ class SetIntRecord(LogRecord):
             tx_num (int): The transaction number.
             blk (BlockID): The block number.
             offset (int): The transaction offset.
-            value (int): The value.
+            value (float): The value.
 
         Returns: The LSN of the new log.
 
@@ -59,11 +59,11 @@ class SetIntRecord(LogRecord):
 
         rec = bytearray(value_pos + 4)
         p = Page(rec)
-        p.set_int(LogRecord._TYPE_POS, RecordType.SET_INT.value)
+        p.set_int(LogRecord._TYPE_POS, RecordType.SET_FLOAT.value)
         p.set_int(LogRecord._TX_POS, tx_num)
         p.set_string(LogRecord._FILE_POS, blk.filename)
         p.set_int(block_pos, blk.number)
         p.set_int(offset_pos, offset)
-        p.set_int(value_pos, value)
+        p.set_float(value_pos, value)
 
         return lm.append(p.content)

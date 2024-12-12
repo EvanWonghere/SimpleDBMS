@@ -38,6 +38,9 @@ def doQuery(stmt: EmbeddedStatement, cmd):
                 if fldtype == FieldType.INT:
                     ival = rs.get_int(fldname)
                     print((fmt + "d") % ival, end="")
+                elif fldtype == FieldType.FLOAT:
+                    fval = rs.get_float(fldname)
+                    print((fmt + "f") % fval, end="")
                 else:
                     sval = rs.get_string(fldname)
                     print((fmt + "s") % sval, end="")
@@ -61,6 +64,7 @@ def doQuery(stmt: EmbeddedStatement, cmd):
 
 def doUpdate(stmt: EmbeddedStatement, cmd: str):
     try:
+        print("start update")
         howmany = stmt.execute_update(cmd)
         print(howmany, "records processed")
     except Error as e:
@@ -91,13 +95,3 @@ if __name__ == "__main__":
                 doUpdate(stmt, cmd)
     except Error as e:
         print("SQL Exception:", e)
-
-
-
-
-
-
-
-
-
-

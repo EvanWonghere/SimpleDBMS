@@ -72,6 +72,23 @@ class Scan(ABC):
         pass
 
     @abstractmethod
+    def get_float(self, field_name: str) -> float:
+        """
+        Retrieve a float value from the current record.
+
+        Args:
+            field_name (str): The name of the field to retrieve the float value from.
+
+        Returns:
+            float: The float value of the specified field.
+
+        Raises:
+            KeyError: If the field name does not exist.
+            ValueError: If the field value is not a float.
+        """
+        pass
+
+    @abstractmethod
     def get_value(self, field_name: str) -> Constant:
         """
         Retrieve the value from the current record as a Constant.

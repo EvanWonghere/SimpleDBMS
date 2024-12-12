@@ -29,7 +29,9 @@ class Planner:
 
     def execute_update(self, cmd: str, tx: Transaction) -> int:
         parser = Parser(cmd)
+        # print("Start update command")
         data = parser.update_command()
+        # print("End update command")
 
         if isinstance(data, InsertData):
             return self.__update_planner.execute_insert(data, tx)

@@ -42,7 +42,9 @@ class TableMgr:
         tcat.set_int("slot_size", layout.slot_size)
 
         fcat = TableScan(tx, "field_cat", self.__fcatLayout)
+        print("Start create table")
         for field_name in schema.fields:
+            print(f"table name: {table_name}, field name: {field_name}, type: {schema.get_field_type(field_name)}, length: {schema.get_field_length(field_name)}, offset: {layout.get_offset(field_name)}")
             fcat.insert()
             fcat.set_string("table_name", table_name)
             fcat.set_string("field_name", field_name)
@@ -50,6 +52,7 @@ class TableMgr:
             fcat.set_int("length", schema.get_field_length(field_name))
             fcat.set_int("offset", layout.get_offset(field_name))
         fcat.close()
+        print("Table Created")
 
     def get_layout(self, table_name: str, tx: Transaction) -> Layout:
         size = -1

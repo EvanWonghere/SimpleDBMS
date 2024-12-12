@@ -15,5 +15,6 @@ class FieldType(Enum):
         - INT: 4 bytes
         - STRING: Variable size, typically up to a maximum length defined elsewhere.
     """
-    INT = 4  # Represents an integer field with a fixed size of 4 bytes.
-    STRING = 12  # Represents a string field with a fixed size of 12 bytes (this can be adjusted based on requirements).
+    INT = 0  # Represents an integer field.
+    FLOAT = 1 # Represents a float field.
+    STRING = 2  # Represents a string field.

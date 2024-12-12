@@ -154,6 +154,7 @@ class FileMgr:
         f = self.__opened_files.get(filename)
         if f is None:
             db_table: str = os.path.join(self.__db_directory, filename)
+            # print(f"table path is {db_table}, exists? {os.path.exists(db_table)}")
             if not os.path.exists(db_table):
                 f = open(db_table, 'w')  # Create a new file if it doesn't exist
                 f.close()  # Close the file to create it

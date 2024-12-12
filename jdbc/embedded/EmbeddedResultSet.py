@@ -40,6 +40,14 @@ class EmbeddedResultSet:
             self.__embedded_connection.rollback()
             raise Error(e)
 
+    def get_float(self, field_name: str) -> float:
+        try:
+            field_name = field_name.lower()
+            return self.__scan.get_float(field_name)
+        except RuntimeError as e:
+            self.__embedded_connection.rollback()
+            raise Error(e)
+
     def get_metadata(self) -> EmbeddedMetadata:
         return EmbeddedMetadata(self.__schema)
 

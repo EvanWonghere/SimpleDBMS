@@ -107,6 +107,38 @@ class RecordPage:
         # print(f"Getting field {field_name}, pos is {self.__offset(slot)} + {self.__layout.get_offset(field_name)}")
         return self.__tx.get_string(self.__blk, field_pos)
 
+    def set_float(self, slot: int, field_name: str, value: float):
+        """
+        Set a float value for a specified field in a slot.
+
+        Args:
+            slot (int): The slot number where the record is stored.
+            field_name (str): The name of the field to set.
+            value (float): The float value to set.
+
+        Raises:
+            KeyError: If the field name does not exist in the schema.
+        """
+        field_pos = self.__get_field_pos(slot, field_name)
+        self.__tx.set_float(self.__blk, field_pos, value, True)
+
+    def get_float(self, slot: int, field_name: str) -> float:
+        """
+        Retrieve a float value from a specified field in a slot.
+
+        Args:
+            slot (int): The slot number where the record is stored.
+            field_name (str): The name of the field to retrieve.
+
+        Returns:
+            float: The string value of the specified field.
+
+        Raises:
+            KeyError: If the field name does not exist in the schema.
+        """
+        field_pos = self.__get_field_pos(slot, field_name)
+        return self.__tx.get_float(self.__blk, field_pos)
+
     def delete(self, slot: int):
         """
         Delete a record by marking its slot as empty.
@@ -131,6 +163,8 @@ class RecordPage:
                 field_type = self.__layout.schema.get_field_type(field_name)
                 if field_type == FieldType.INT:
                     self.__tx.set_int(self.__blk, field_pos, 0, False)
+                elif field_type == FieldType.FLOAT:
+                    self.__tx.set_float(self.__blk, field_pos, 0, False)
                 elif field_type == FieldType.STRING:
                     self.__tx.set_string(self.__blk, field_pos, "", False)
                 else:

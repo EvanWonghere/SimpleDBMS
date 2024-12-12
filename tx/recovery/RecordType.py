@@ -14,3 +14,4 @@ class RecordType(Enum):
     ROLLBACK = 3  # Represents a rollback record, indicating a transaction failure.
     SET_INT = 4  # Represents a log record for setting an integer value.
     SET_STRING = 5  # Represents a log record for setting a string value.
+    SET_FLOAT = 6

@@ -112,7 +112,7 @@ class Layout:
         """
         field_type = self.__schema.get_field_type(field_name)
         field_length = self.__schema.get_field_length(field_name)
-        if field_type == FieldType.INT:
+        if field_type == FieldType.INT or field_type == FieldType.FLOAT:
             return 4  # Fixed size for integer fields
         elif field_type == FieldType.STRING:
             return Page.max_length(field_length)  # Variable size for string fields

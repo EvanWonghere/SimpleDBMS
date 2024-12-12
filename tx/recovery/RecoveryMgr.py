@@ -11,6 +11,7 @@ from tx.recovery.CommitRecord import CommitRecord
 from tx.recovery.RecordType import RecordType
 from tx.recovery.RecordUtil import RecordUtil
 from tx.recovery.RollbackRecord import RollbackRecord
+from tx.recovery.SetFloatRecord import SetFloatRecord
 from tx.recovery.SetIntRecord import SetIntRecord
 from tx.recovery.SetStringRecord import SetStringRecord
 from tx.recovery.StartRecord import StartRecord
@@ -107,6 +108,20 @@ class RecoveryMgr:
         """
         val = buff.contents.get_string(offset)
         return SetStringRecord.write_to_log(self.__lm, self.__tx_num, buff.block, offset, val)
+
+    def set_float(self, buff: Buffer, offset: int) -> int:
+        """
+        Set a float value in the database and log the operation.
+
+        Args:
+            buff (Buffer): The buffer containing the block to modify.
+            offset (int): The offset in the block where the float will be set.
+
+        Returns:
+            int: The LSN of the log record created for this operation.
+        """
+        val = buff.contents.get_float(offset)
+        return SetFloatRecord.write_to_log(self.__lm, self.__tx_num, buff.block, offset, val)
 
     def __do_rollback(self, tx):
         """Perform rollback operations for the transaction, undoing all operations in reverse order.
