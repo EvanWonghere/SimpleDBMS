@@ -2,6 +2,9 @@
 
 This repository contains the source code for a simple database management system (DBMS), developed as a term project for the DB class. The system provides essential database functionalities and supports basic SQL-like operations.
 
+## Guide
+Run [simpledb.StartDB.py](simpledb/StartDB.py) to start the project.
+
 ## Features
 
 The implemented DBMS includes the following features:
@@ -23,6 +26,5 @@ The implemented DBMS includes the following features:
   - Concurrency control for safe multi-transaction environments.
 
 ## Todo:
-- ***Refactor and rewrite the simpledb package.***
 - ***Add comments to all scripts.***
 - ***See `#TODO` in the project.***
