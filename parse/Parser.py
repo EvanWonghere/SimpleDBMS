@@ -229,6 +229,8 @@ class Parser:
         elif self.__lexer.match_keyword("float"):
             self.__lexer.eat_keyword("float")
             schema.add_float_field(field_name)
+        else:
+            raise RuntimeError(f"Unknown field type or field type is missing.")
 
         return schema
 
