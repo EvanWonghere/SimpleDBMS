@@ -87,7 +87,8 @@ class Lexer:
             raise BadSyntaxException
 
     def __init_keywords(self):
-        self.__keywords = ["select", "from", "where", "and",
+        self.__keywords = ["select", "from", "where",
+                           "and", "or",
                            "insert", "into", "values",
                            "delete", "update", "set",
                            "create", "table",

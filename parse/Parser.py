@@ -58,6 +58,11 @@ class Parser:
         predicate = Predicate(self.term)
         if self.__lexer.match_keyword("and"):
             self.__lexer.eat_keyword("and")
+            predicate.logic_ops.append("and")
+            predicate.conjoin_with(self.predicate)
+        elif self.__lexer.match_keyword("or"):
+            self.__lexer.eat_keyword("or")
+            predicate.logic_ops.append("or")
             predicate.conjoin_with(self.predicate)
         return predicate
 
@@ -71,7 +76,7 @@ class Parser:
         if self.__lexer.match_keyword("where"):
             self.__lexer.eat_keyword("where")
             predicate = self.predicate
-
+        # print(f"Query data is {QueryData(fields, tables, predicate)}")
         return QueryData(fields, tables, predicate)
 
     @property

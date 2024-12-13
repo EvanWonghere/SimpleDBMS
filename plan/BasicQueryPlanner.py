@@ -35,5 +35,6 @@ class BasicQueryPlanner(QueryPlanner):
             plan = ProductPlan(plan, next_plan)
         plan = SelectPlan(plan, data.predicate)
         plan = ProjectPlan(plan, data.fields)
+        # print(f"After create plan, plan is {plan.schema().fields}, {plan.schema().infos}")
 
         return plan

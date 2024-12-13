@@ -3,6 +3,9 @@
 # @Author  : EvanWong
 # @File    : Predicate.py
 # @Project : TestDB
+import copy
+import queue
+from queue import Queue
 from typing import Optional
 
 from plan.Plan import Plan
@@ -18,22 +21,46 @@ class Predicate:
     """
     def __init__(self, t: Term=None):
         self.__terms: list[Term] = []
+        self.logic_ops: list[str] = []
         if t is not None:
             self.__terms.append(t)
 
     def __str__(self):
+        res = ""
         if not self.__terms:
-            return ""
-        return " and ".join(str(term) for term in self.__terms)
+            return res
+
+        res += str(self.__terms[0])
+        for i in range(self.__terms.__len__() - 1):
+            res += f" {self.logic_ops[i]} {str(self.__terms[i])}"
+        return res
+
+    def is_empty(self) -> bool:
+        return len(self.__terms) == 0
 
     def conjoin_with(self, predicate):
         self.__terms.extend(predicate.__terms)
 
     def is_satisfied(self, s: Scan) -> bool:
-        for term in self.__terms:
-            if not term.is_satisfied(s):
-                return False
-        return True
+        # for term in self.__terms:
+        #     if not term.is_satisfied(s):
+        #         return False
+        # return True
+        if len(self.__terms) == 0:
+            return True
+
+        cur_res = self.__terms[0].is_satisfied(s)
+        for i in range(len(self.__terms) - 1):
+            new_res = self.__terms[i+1].is_satisfied(s)
+            cur_op = self.logic_ops[i]
+            if cur_op == "and":
+                cur_res = new_res and cur_res
+            elif cur_op == "or":
+                cur_res = new_res or cur_res
+            else:
+                raise ValueError(f"No such logic operator {cur_op}")
+
+        return cur_res
 
     def reduction_factor(self, p: Plan) -> int:
         factor: int = 1

@@ -13,9 +13,6 @@ from query.Scan import Scan
 from record.Schema import Schema
 
 
-# TODO: Be able to compare "or".
-
-
 class Term:
     """
     Create a new term that compares two expressions for equality.

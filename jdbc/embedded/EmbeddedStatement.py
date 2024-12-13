@@ -20,6 +20,7 @@ class EmbeddedStatement:
         try:
             tx = self.__embedded_connection.get_transaction()
             plan = self.__planner.create_query_plan(query, tx)
+            # print(f"Got query plan: {plan.schema().fields}, {plan.schema().infos}")
             return EmbeddedResultSet(plan, self.__embedded_connection)
         except (RuntimeError, BadSyntaxException, ValueError, KeyError) as e:
             self.__embedded_connection.rollback()

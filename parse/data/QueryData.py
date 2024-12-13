@@ -17,7 +17,7 @@ class QueryData:
     def __str__(self) -> str:
         fields = ", ".join(self.__fields)
         tables = ", ".join(self.__tables)
-        predicate = f" WHERE {self.__predicate}" if self.__predicate else ""
+        predicate = f" WHERE {self.__predicate}" if not self.__predicate.is_empty() else ""
         return f"select {fields} from {tables}{predicate}"
 
     @property
