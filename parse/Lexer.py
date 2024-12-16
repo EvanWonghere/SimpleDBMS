@@ -31,14 +31,15 @@ class Lexer:
         # print(f"Type matched? {self.__tokenizer.token_type == self.__tokenizer.TT_WORD}")
         # print(f"Current type is {self.__tokenizer.token_type}")
         # print(f"Current str value {self.__tokenizer.str_value}")
-        return self.__tokenizer.token_type == self.__tokenizer.TT_WORD and self.__tokenizer.str_value == word
+        return self.__tokenizer.token_type == self.__tokenizer.TT_WORD and self.__tokenizer.str_value.lower() == word
 
     def match_id(self) -> bool:
         # print(f"Token type matched? {self.__tokenizer.token_type == self.__tokenizer.TT_WORD}")
         # print(f"Value matched? {self.__tokenizer.str_value not in self.__keywords}")
         # print(f"Current value: {self.__tokenizer.str_value}")
         # print(f"Current keyword: {self.__keywords}")
-        return self.__tokenizer.token_type == self.__tokenizer.TT_WORD\
+        return (self.__tokenizer.token_type == self.__tokenizer.TT_WORD
+                or self.__tokenizer.token_type == "*")\
             and self.__tokenizer.str_value not in self.__keywords
 
     def eat_delim(self, delim: str):
@@ -76,7 +77,10 @@ class Lexer:
     def eat_id(self) -> str:
         if not self.match_id():
             raise BadSyntaxException
-        str_value = self.__tokenizer.str_value
+        if self.__tokenizer.token_type == "*":
+            str_value = "*"
+        else:
+            str_value = self.__tokenizer.str_value
         self.__next_token()
         return str_value
 

@@ -3,7 +3,7 @@
 # @Author  : EvanWong
 # @File    : MetadataMgrTest.py
 # @Project : TestDB
-
+from metadata.IndexInfo import IndexInfo
 from simpledb.SimpleDB import SimpleDB
 from MetadataMgr import MetadataMgr
 from record.Schema import Schema
@@ -54,10 +54,8 @@ mdm.create_index("indexA", "MyTable", "A", tx)
 mdm.create_index("indexB", "MyTable", "B", tx)
 print("***************************************************************************")
 print("Start get info")
-index_map = mdm.get_index_info("MyTable", tx)
+index_map: dict[str, IndexInfo] = mdm.get_index_info("MyTable", tx)
 print("End get info")
-print(f"index_map is empty : {index_map == {}}")
-print(f"index_map is {index_map.keys()}: {index_map.values()}")
 print("***************************************************************************")
 
 ii = index_map["A"]

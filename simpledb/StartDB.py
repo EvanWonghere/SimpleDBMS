@@ -102,7 +102,7 @@ if __name__ == "__main__":
         stmt = conn.create_statement()
         print("输入 -help- 查看帮助")
         while True:
-            cmd = input("SQL> ").strip().lower()
+            cmd = input("SQL> ").strip()
             if cmd.startswith("exit"):
                 break
             elif cmd == "-help-":
