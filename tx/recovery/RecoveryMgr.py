@@ -50,9 +50,9 @@ class RecoveryMgr:
 
         This method flushes all the buffers related to the transaction and writes a commit log record.
         """
-        self.__bm.flush_all(self.__tx_num)
         lsn = CommitRecord.write_to_log(self.__lm, self.__tx_num)
         self.__lm.flush(lsn)
+        self.__bm.flush_all(self.__tx_num)
 
     def rollback(self, tx):
         """Rollback the current transaction, undoing all the changes made by the transaction.
@@ -142,7 +142,7 @@ class RecoveryMgr:
         """Recover the database state, undoing all operations that were not committed.
 
         This method scans through the log records, rolling back uncommitted transactions
-        and stopping at the last checkpoint.
+        and stopping at the last checkpoint 
 
         Args:
             tx: The transaction object for recovery operations.

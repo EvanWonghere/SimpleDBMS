@@ -93,25 +93,85 @@ def do_show_tables(db_name: str):
         print('-', end="")
     print("")
 
+def do_show_dbs():
+    db_names: list[str] = []
+    max_len = 13
+    for path in os.listdir():
+        if os.path.isdir(path) and path.endswith(".db"):
+            db_names.append(path[:-3])
+
+    for _ in range(max_len):
+        print('-', end="")
+    print("")
+    for _ in range((max_len - 10) // 2):
+        print(" ", end="")
+    print("databases")
+    for _ in range(max_len):
+        print('-', end="")
+    print("")
+    for db_name in db_names:
+        white_space_length = (max_len - len(db_name)) // 2
+        for _ in range(white_space_length):
+            print(" ", end="")
+        print(db_name)
+    for _ in range(max_len):
+        print('-', end="")
+    print("")
+
+def show_notification():
+    print("Please to choose a database first.")
+    print("Type `create {database_name}` to create a new database,}`")
+    print("or type `use {database_name}` to use the existing database.}`")
+
 
 if __name__ == "__main__":
-    dbname = "test"
+    dbname = ""
     driver = EmbeddedDriver()
+    conn = None
+    stmt = None
+    where = "SQL"
     try:
-        conn = driver.connect(dbname)
-        stmt = conn.create_statement()
-        print("输入 -help- 查看帮助")
+        print("Type `help` to see available commands")
         while True:
-            cmd = input("SQL> ").strip()
+            cmd = input(where + "> ").strip()
             if cmd.startswith("exit"):
                 break
-            elif cmd == "-help-":
+            elif cmd == "help":
                 print_help()
-            elif cmd.startswith("select"):
-                do_query(stmt, cmd)
-            elif cmd == "show tables":
-                do_show_tables(dbname)
+            elif cmd.lower().startswith("select"):
+                if stmt is None:
+                    show_notification()
+                else:
+                    do_query(stmt, cmd)
+            elif cmd.lower() == "show tables":
+                if dbname == "":
+                    show_notification()
+                else:
+                    do_show_tables(dbname)
+            elif cmd.lower() == "show databases":
+                do_show_dbs()
+            elif cmd.lower().startswith("create database"):
+                dbname = cmd.split(" ")[-1] + ".db"
+                if os.path.exists(dbname):
+                    print(f"Database {dbname[:-3]} already exists, type `use {dbname[:-3]}` to use the database.")
+                else:
+                    conn = driver.connect(dbname)
+                    stmt = conn.create_statement()
+                    print(f"Database created. Changed to use {dbname[:-3]}.")
+                    where = f"SQL/{dbname[:-3]}"
+            elif cmd.lower().startswith("use"):
+                dbname = cmd.split(" ")[-1] + ".db"
+                if not os.path.exists(dbname):
+                    print(f"Database {dbname[:-3]} does not exist, type `create {dbname[:-3]}` to create the database.")
+                else:
+                    print(f"Using database {dbname[:-3]}")
+                    where = f"SQL/{dbname[:-3]}"
+                    conn = driver.connect(dbname)
+                    stmt = conn.create_statement()
             else:
-                do_update(stmt, cmd)
+                if stmt is None:
+                    show_notification()
+                else:
+                    do_update(stmt, cmd)
     except Error as e:
         print("SQL Exception:", e)
