@@ -152,6 +152,9 @@ class Parser:
         values = self.__constant_list
         self.__lexer.eat_delim(')')
 
+        if len(fields) != len(values):
+            raise ValueError("Fields and values must have same length")
+
         return InsertData(table_name, fields, values)
 
     @property

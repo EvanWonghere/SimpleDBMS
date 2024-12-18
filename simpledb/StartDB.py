@@ -10,7 +10,12 @@ from jdbc.embedded.EmbeddedDriver import EmbeddedDriver
 from jdbc.embedded.EmbeddedMetadata import EmbeddedMetadata
 from jdbc.embedded.EmbeddedResultSet import EmbeddedResultSet
 from jdbc.embedded.EmbeddedStatement import EmbeddedStatement
+from metadata.TableMgr import TableMgr
 from record.FieldType import FieldType
+from record.Layout import Layout
+from record.Schema import Schema
+from record.TableScan import TableScan
+from tx.Transaction import Transaction
 
 
 def do_query(statement: EmbeddedStatement, command: str):
@@ -53,7 +58,7 @@ def do_query(statement: EmbeddedStatement, command: str):
         print("SQL Exception:", err)
 
 
-def do_update(statement: EmbeddedStatement, command: str):
+def do_update(statement: EmbeddedStatement, command: str, db_name: str):
     try:
         print("start update")
         howmany = statement.execute_update(command)
@@ -67,13 +72,18 @@ def print_help():
     print(f.read())
 
 
-def do_show_tables(db_name: str):
+def do_show_tables(tx: Transaction):
     tbl_names: list[str] = []
     max_len = 9
-    for table_file_name in os.listdir(db_name):
-        if table_file_name.endswith(".tbl") and not table_file_name.endswith("_cat.tbl"):
-            tbl_names.append(table_file_name[:-4])
-            max_len = max(max_len, len(table_file_name))
+    table_cat_schema = Schema()
+    table_cat_schema.add_string_field("table_name", TableMgr.MAX_NAME_LENGTH)
+    table_cat_schema.add_int_field("slot_size")
+    ts = TableScan(tx, "table_cat", Layout(table_cat_schema))
+    ts.before_first()
+    while ts.next():
+        table_name = ts.get_string("table_name")
+        if table_name is not None and not table_name.endswith("_cat"):
+            tbl_names.append(ts.get_string("table_name"))
 
     for _ in range(max_len):
         print('-', end="")
@@ -144,10 +154,10 @@ if __name__ == "__main__":
                 else:
                     do_query(stmt, cmd)
             elif cmd.lower() == "show tables":
-                if dbname == "":
+                if stmt is None:
                     show_notification()
                 else:
-                    do_show_tables(dbname)
+                    do_show_tables(conn.get_transaction())
             elif cmd.lower() == "show databases":
                 do_show_dbs()
             elif cmd.lower().startswith("create database"):
@@ -172,6 +182,6 @@ if __name__ == "__main__":
                 if stmt is None:
                     show_notification()
                 else:
-                    do_update(stmt, cmd)
+                    do_update(stmt, cmd, dbname)
     except Error as e:
         print("SQL Exception:", e)

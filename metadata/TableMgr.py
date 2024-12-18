@@ -48,6 +48,12 @@ class TableMgr:
         layout = Layout(schema)
         # print(f"creating table: {table_name}, slot_size is {layout.slot_size}")
         table_cat = TableScan(tx, "table_cat", self.__table_cat_layout)
+
+        table_cat.before_first()
+        while table_cat.next():
+            if table_cat.get_string("table_name") == table_name:
+                raise ValueError(f"Table {table_name} already exists")
+
         table_cat.insert()
         table_cat.set_string("table_name", table_name)
         table_cat.set_int("slot_size", layout.slot_size)
@@ -63,7 +69,7 @@ class TableMgr:
             field_cat.set_int("length", schema.get_field_length(field_name))
             field_cat.set_int("offset", layout.get_offset(field_name))
         field_cat.close()
-        tx.commit()
+        # tx.commit()
         # print("Table Created")
 
     def get_layout(self, table_name: str, tx: Transaction) -> Layout:
