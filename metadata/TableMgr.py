@@ -63,6 +63,7 @@ class TableMgr:
             field_cat.set_int("length", schema.get_field_length(field_name))
             field_cat.set_int("offset", layout.get_offset(field_name))
         field_cat.close()
+        tx.commit()
         # print("Table Created")
 
     def get_layout(self, table_name: str, tx: Transaction) -> Layout:
