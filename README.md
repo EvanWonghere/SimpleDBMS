@@ -9,6 +9,9 @@ Run [simpledb.StartDB.py](simpledb/StartDB.py) to start the project.
 
 The implemented DBMS includes the following features:
 
+- **Database Management**
+    - Create and change database.
+
 - **Table Management**:
   - Create tables with defined schema.
   - Support for data types: `int`, `float`, `varchar`.
