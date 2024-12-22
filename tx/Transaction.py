@@ -46,7 +46,7 @@ class Transaction:
         """
         print(f"{action_message} transaction {self.__tx_num}")
         self.__cm.release()  # Release all locks held by the transaction
-        self.__buffers.unpin_all()  # Unpin all buffers associated with this transaction
+        self.__buffers.unpin_all() # Unpin all buffers associated with this transaction
 
     def recover(self):
         """ Recover the transaction's state from logs. """
@@ -76,6 +76,7 @@ class Transaction:
     def set_int(self, blk: BlockID, offset: int, value: int, ok_to_log: bool):
         """ Set an integer value in a block at a specified offset. """
         if not self.__cm.x_lock(blk):
+            self.__cm.release()
             raise InterruptedError("Unable to acquire exclusive lock on block.")
         buff = self.__buffers.get_buffer(blk)
         lsn = -1 if not ok_to_log else self.__rm.set_int(buff, offset)
@@ -92,6 +93,7 @@ class Transaction:
     def set_string(self, blk: BlockID, offset: int, value: str, ok_to_log: bool):
         """ Set a string value in a block at a specified offset. """
         if not self.__cm.x_lock(blk):
+            self.__cm.release()
             raise InterruptedError("Unable to acquire exclusive lock on block.")
         buff = self.__buffers.get_buffer(blk)
         lsn = -1 if not ok_to_log else self.__rm.set_string(buff, offset)
@@ -108,6 +110,7 @@ class Transaction:
     def set_float(self, blk: BlockID, offset: int, value: float, ok_to_log: bool):
         """ Set a float value in a block at a specified offset. """
         if not self.__cm.x_lock(blk):
+            self.__cm.release()
             raise InterruptedError("Unable to acquire exclusive lock on block.")
         buff = self.__buffers.get_buffer(blk)
         lsn = -1 if not ok_to_log else self.__rm.set_float(buff, offset)

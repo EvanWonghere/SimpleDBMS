@@ -22,7 +22,7 @@ class EmbeddedStatement:
             plan = self.__planner.create_query_plan(query, tx)
             # print(f"Got query plan: {plan.schema().fields}, {plan.schema().infos}")
             return EmbeddedResultSet(plan, self.__embedded_connection)
-        except (RuntimeError, BadSyntaxException, ValueError, KeyError) as e:
+        except (RuntimeError, BadSyntaxException, ValueError, KeyError, InterruptedError) as e:
             self.__embedded_connection.rollback()
             raise Error(e)
 
@@ -33,7 +33,7 @@ class EmbeddedStatement:
             res = self.__planner.execute_update(cmd, tx)
             self.__embedded_connection.commit()
             return res
-        except (RuntimeError, BadSyntaxException, ValueError) as e:
+        except (RuntimeError, BadSyntaxException, ValueError, InterruptedError) as e:
             self.__embedded_connection.rollback()
             raise Error(e)
 

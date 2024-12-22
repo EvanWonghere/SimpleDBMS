@@ -66,7 +66,8 @@ class Tokenizer:
 
     @staticmethod
     def __is_string(token: str) -> bool:
-        return token.isalnum() and not token.isdigit()
+        pattern = re.compile(r"^[a-zA-Z0-9_]+$")
+        return bool(pattern.match(token))
 
     def __extract_quoted_string(self, quote_char: str) -> str:
         result = ""

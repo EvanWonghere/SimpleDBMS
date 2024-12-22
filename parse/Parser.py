@@ -241,8 +241,10 @@ class Parser:
     def create_view_data(self) -> CreateViewData:
         self.__lexer.eat_keyword("view") # "create" was eaten.
         view_name = self.__lexer.eat_id()
+        print("Target view name: ", view_name)
         self.__lexer.eat_keyword("as")
         query_data = self.query_data()
+        print("Query data: ", query_data.fields, query_data.tables)
 
         return CreateViewData(view_name, query_data)
 

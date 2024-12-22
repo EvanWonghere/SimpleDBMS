@@ -76,6 +76,7 @@ class Lexer:
 
     def eat_id(self) -> str:
         if not self.match_id():
+            print(f"id not matched, current type is {self.__tokenizer.token_type}")
             raise BadSyntaxException
         if self.__tokenizer.token_type == "*":
             str_value = "*"
@@ -86,8 +87,10 @@ class Lexer:
 
     def  __next_token(self):
         try:
+            # print("*********** next toke safe **************")
             self.__tokenizer.next_token()
         except RuntimeError:
+            # print("*********** next toke error **************")
             raise BadSyntaxException
 
     def __init_keywords(self):

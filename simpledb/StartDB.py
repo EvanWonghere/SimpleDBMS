@@ -4,7 +4,10 @@
 # @File    : StartDB.py
 # @Project : TestDB
 import os
+import sys
 from sqlite3 import Error
+
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from jdbc.embedded.EmbeddedDriver import EmbeddedDriver
 from jdbc.embedded.EmbeddedMetadata import EmbeddedMetadata
@@ -169,7 +172,7 @@ if __name__ == "__main__":
                     stmt = conn.create_statement()
                     print(f"Database created. Changed to use {dbname[:-3]}.")
                     where = f"SQL/{dbname[:-3]}"
-            elif cmd.lower().startswith("use"):
+            elif cmd.lower().split(" ")[0] == "use":
                 dbname = cmd.split(" ")[-1] + ".db"
                 if not os.path.exists(dbname):
                     print(f"Database {dbname[:-3]} does not exist, type `create {dbname[:-3]}` to create the database.")
