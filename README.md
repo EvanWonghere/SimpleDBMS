@@ -29,5 +29,4 @@ The implemented DBMS includes the following features:
   - Concurrency control for safe multi-transaction environments.
 
 ## Todo:
-- ***Add comments to all scripts.***
 - ***See `#TODO` in the project.***
