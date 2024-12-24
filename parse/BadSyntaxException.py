@@ -3,11 +3,12 @@
 # @Author  : EvanWong
 # @File    : BadSyntaxException.py
 # @Project : TestDB
+from typing import Optional
 
 
 class BadSyntaxException(Exception):
-    def __init__(self):
-        pass
+    def __init__(self, err: Optional[str]):
+        self.err = err
 
     def __str__(self):
-        return "simpleDB.parse.BadSyntaxException"
+        return "simpleDB.parse.BadSyntaxException: " + self.err

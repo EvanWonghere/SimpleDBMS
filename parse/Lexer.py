@@ -3,103 +3,142 @@
 # @Author  : EvanWong
 # @File    : Lexer.py
 # @Project : TestDB
-from typing import Collection, Optional
 
+from typing import Collection, Optional
 from parse.BadSyntaxException import BadSyntaxException
 from parse.Tokenizer import Tokenizer
 
 class Lexer:
+    """
+    A higher-level lexer that interprets tokens from Tokenizer for basic SQL matching.
+
+    Attributes:
+        __keywords (Optional[Collection[str]]): A set or list of SQL keywords.
+        __tokenizer (Tokenizer): The underlying tokenizer.
+    """
+
     def __init__(self, input_string: str):
+        """
+        Initialize the Lexer with the input string, setup keywords, and read the first token.
+
+        Args:
+            input_string (str): The SQL-like query string to lex.
+        """
         self.__keywords: Optional[Collection[str]] = None
         self.__init_keywords()
         self.__tokenizer = Tokenizer(input_string)
         self.__next_token()
 
     def match_delim(self, delim: str) -> bool:
-        return delim == self.__tokenizer.token_type
+        """
+        Check if the current token matches a specific delimiter (like ',' or '=').
+
+        Args:
+            delim (str): The delimiter to match.
+
+        Returns:
+            bool: True if matched, False otherwise.
+        """
+        return self.__tokenizer.token_type == delim
 
     def match_int_constant(self) -> bool:
-        return self.__tokenizer.token_type == self.__tokenizer.TT_NUMBER
+        return self.__tokenizer.token_type == Tokenizer.TT_NUMBER
 
     def match_str_constant(self) -> bool:
         return self.__tokenizer.token_type in ("'", '"')
 
     def match_float_constant(self) -> bool:
-        return self.__tokenizer.token_type == self.__tokenizer.TT_FLOAT
+        return self.__tokenizer.token_type == Tokenizer.TT_FLOAT
 
     def match_keyword(self, word: str) -> bool:
-        # print(f"Type matched? {self.__tokenizer.token_type == self.__tokenizer.TT_WORD}")
-        # print(f"Current type is {self.__tokenizer.token_type}")
-        # print(f"Current str value {self.__tokenizer.str_value}")
-        return self.__tokenizer.token_type == self.__tokenizer.TT_WORD and self.__tokenizer.str_value.lower() == word
+        """
+        Check if current token is a TT_WORD and equals the given keyword (case-insensitive).
+        """
+        return (self.__tokenizer.token_type == Tokenizer.TT_WORD
+                and self.__tokenizer.str_value.lower() == word.lower())
 
     def match_id(self) -> bool:
-        # print(f"Token type matched? {self.__tokenizer.token_type == self.__tokenizer.TT_WORD}")
-        # print(f"Value matched? {self.__tokenizer.str_value not in self.__keywords}")
-        # print(f"Current value: {self.__tokenizer.str_value}")
-        # print(f"Current keyword: {self.__keywords}")
-        return (self.__tokenizer.token_type == self.__tokenizer.TT_WORD
-                or self.__tokenizer.token_type == "*")\
-            and self.__tokenizer.str_value not in self.__keywords
+        """
+        Check if current token is an identifier (TT_WORD and not a known keyword)
+        or a special token like '*'.
+        """
+        if (self.__tokenizer.token_type == Tokenizer.TT_WORD
+                and self.__tokenizer.str_value.lower() not in self.__keywords):
+            return True
+        if self.__tokenizer.token_type == '*':
+            return True
+        return False
 
     def eat_delim(self, delim: str):
         if not self.match_delim(delim):
-            print(f"delim not matched, current is {self.__tokenizer.str_value}")
-            raise BadSyntaxException
+            raise BadSyntaxException(f"Expected delimiter '{delim}', found '{self.__tokenizer.str_value}'")
         self.__next_token()
 
     def eat_int_constant(self) -> int:
         if not self.match_int_constant():
-            raise BadSyntaxException
-        int_value = self.__tokenizer.int_value
+            raise BadSyntaxException("Expected an integer constant.")
+        value = self.__tokenizer.int_value
         self.__next_token()
-        return int_value
+        return value
 
     def eat_float_constant(self) -> float:
         if not self.match_float_constant():
-            raise BadSyntaxException
-        float_value = self.__tokenizer.float_value
+            raise BadSyntaxException("Expected a float constant.")
+        value = self.__tokenizer.float_value
         self.__next_token()
-        return float_value
+        return value
 
     def eat_str_constant(self) -> str:
         if not self.match_str_constant():
-            raise BadSyntaxException
-        str_value = self.__tokenizer.str_value
+            raise BadSyntaxException("Expected a string constant.")
+        value = self.__tokenizer.str_value
         self.__next_token()
-        return str_value
+        return value
 
     def eat_keyword(self, word: str):
+        """
+        Consume the current token if it's a matching keyword, else raise error.
+        """
         if not self.match_keyword(word):
-            raise BadSyntaxException
+            raise BadSyntaxException(f"Expected keyword '{word}', got '{self.__tokenizer.str_value}'")
         self.__next_token()
 
     def eat_id(self) -> str:
-        if not self.match_id():
-            print(f"id not matched, current type is {self.__tokenizer.token_type}")
-            raise BadSyntaxException
-        if self.__tokenizer.token_type == "*":
-            str_value = "*"
-        else:
-            str_value = self.__tokenizer.str_value
-        self.__next_token()
-        return str_value
+        """
+        Consume the current token if it's a valid identifier, else raise error.
 
-    def  __next_token(self):
+        Returns:
+            str: The identifier (or '*').
+        """
+        if not self.match_id():
+            raise BadSyntaxException(f"Expected an identifier, got '{self.__tokenizer.str_value}'")
+        if self.__tokenizer.token_type == '*':
+            ident = '*'
+        else:
+            ident = self.__tokenizer.str_value
+        self.__next_token()
+        return ident
+
+    def __next_token(self):
+        """
+        Advance to the next token using Tokenizer.
+        """
         try:
-            # print("*********** next toke safe **************")
             self.__tokenizer.next_token()
-        except RuntimeError:
-            # print("*********** next toke error **************")
-            raise BadSyntaxException
+        except RuntimeError as e:
+            raise BadSyntaxException("Lexer error: " + str(e))
 
     def __init_keywords(self):
-        self.__keywords = ["select", "from", "where",
-                           "and", "or",
-                           "insert", "into", "values",
-                           "delete", "update", "set",
-                           "create", "table",
-                           "int", "varchar", "float",
-                           "view", "as",
-                           "index", "on",
-                           "tables", "show"]
+        """
+        Initialize the set/list of known keywords for SQL-like commands.
+        """
+        self.__keywords = {
+            "select", "from", "where", "and", "or",
+            "insert", "into", "values",
+            "delete", "update", "set",
+            "create", "table", "int",
+            "varchar", "float",
+            "view", "as",
+            "index", "on",
+            "tables", "show"
+        }

@@ -3,6 +3,7 @@
 # @Author  : EvanWong
 # @File    : Planner.py
 # @Project : TestDB
+
 from parse.Parser import Parser
 from parse.data.CreateIndexData import CreateIndexData
 from parse.data.CreateTableData import CreateTableData
@@ -16,22 +17,54 @@ from plan.QueryPlanner import QueryPlanner
 from plan.UpdatePlanner import UpdatePlanner
 from tx.Transaction import Transaction
 
-
 class Planner:
+    """
+    The Planner class coordinates query planning and update execution.
+
+    It uses a QueryPlanner to create Plans for SELECT queries,
+    and uses an UpdatePlanner to execute update commands (INSERT, DELETE, UPDATE, CREATE).
+    """
+
     def __init__(self, query_planner: QueryPlanner, update_planner: UpdatePlanner):
+        """
+        Initialize the Planner with a QueryPlanner and an UpdatePlanner.
+
+        Args:
+            query_planner (QueryPlanner): The planner responsible for SELECT queries.
+            update_planner (UpdatePlanner): The planner responsible for INSERT/DELETE/UPDATE/CREATE operations.
+        """
         self.__query_planner = query_planner
         self.__update_planner = update_planner
 
     def create_query_plan(self, query: str, tx: Transaction) -> Plan:
+        """
+        Create a Plan object for the specified SELECT query string.
+
+        Args:
+            query (str): The SQL-like query string (SELECT ...).
+            tx (Transaction): The current transaction.
+
+        Returns:
+            Plan: The Plan for executing the query.
+        """
         parser = Parser(query)
-        query_data = parser.query_data()
+        query_data: QueryData = parser.query_data()
         return self.__query_planner.create_plan(query_data, tx)
 
     def execute_update(self, cmd: str, tx: Transaction) -> int:
+        """
+        Execute an update command (INSERT, DELETE, UPDATE, CREATE).
+
+        Args:
+            cmd (str): The SQL-like command string.
+            tx (Transaction): The current transaction.
+
+        Returns:
+            int: The number of affected records (for data-modifying statements),
+                 or a status code for CREATE statements.
+        """
         parser = Parser(cmd)
-        # print("Start update command")
         data = parser.update_command()
-        # print("End update command")
 
         if isinstance(data, InsertData):
             return self.__update_planner.execute_insert(data, tx)
@@ -46,10 +79,5 @@ class Planner:
         elif isinstance(data, CreateIndexData):
             return self.__update_planner.execute_create_index(data, tx)
         else:
+            # If no recognized data type, return 0 or raise an exception.
             return 0
-
-    def __verify_query(self, query: QueryData):
-        pass
-
-    def __verify_update(self, cmd):
-        pass

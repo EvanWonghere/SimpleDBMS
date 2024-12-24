@@ -3,6 +3,8 @@
 # @Author  : EvanWong
 # @File    : StatMgr.py
 # @Project : TestDB
+
+from typing import Dict
 from metadata.StatInfo import StatInfo
 from metadata.TableMgr import TableMgr
 from record.Layout import Layout
@@ -11,70 +13,95 @@ from tx.Transaction import Transaction
 
 
 class StatMgr:
-    """The manager to manage the statistical information.
-    To keep and refresh the information rather than store them, and there's no need to.
+    """
+    Manages the statistical information of tables, such as the number of blocks and records.
 
-    Attributes:
-        __MAX_CALLS_NUM (int): The maximum number of calls to execute.
-
-        __tm (TableMgr): The TableMgr instance.
-        __calls_num (int): The number of calls to execute.
-        __table_stats (dict[str, StatInfo]): The table statistics.
+    This manager computes and caches table statistics, and refreshes them after a certain number
+    of calls to avoid overhead. No persistent storage for statistics is used.
     """
 
     __MAX_CALLS_NUM = 100
 
     def __init__(self, tm: TableMgr, tx: Transaction):
+        """
+        Initialize the StatMgr with a reference to the table manager and transaction.
+        The constructor also triggers an initial refresh of statistics.
+
+        Args:
+            tm (TableMgr): The table manager instance.
+            tx (Transaction): The current transaction.
+        """
         self.__tm: TableMgr = tm
-        self.__calls_num = 0
-        self.__table_stats: dict[str, StatInfo] = {}
+        self.__calls_num: int = 0
+        self.__table_stats: Dict[str, StatInfo] = {}
         self.__refresh_stats(tx)
 
     def get_stat_info(self, table_name: str, layout: Layout, tx: Transaction) -> StatInfo:
+        """
+        Retrieve or compute the statistics for the specified table.
+
+        If the method has been called more than __MAX_CALLS_NUM times since
+        the last stats refresh, it will trigger a refresh of all table stats.
+
+        Args:
+            table_name (str): The name of the table to get stats for.
+            layout (Layout): The layout of the table (schema and offsets).
+            tx (Transaction): The current transaction.
+
+        Returns:
+            StatInfo: The statistical information (block count, record count) for the table.
+        """
         self.__calls_num += 1
         if self.__calls_num > self.__MAX_CALLS_NUM:
             self.__refresh_stats(tx)
 
         info = self.__table_stats.get(table_name)
-        if info is not None:
-            return info
-        # print(f"No such table: {table_name}, currents are {self.__table_stats.keys()}")
-        info = self.__calc_table_stats(table_name, layout, tx)
-        self.__table_stats[table_name] = info
-        # print(f"Calculated table stats: {info}")
+        if info is None:
+            info = self.__calc_table_stats(table_name, layout, tx)
+            self.__table_stats[table_name] = info
         return info
 
     def __refresh_stats(self, tx: Transaction):
-        # print("Get into refresh stats")
+        """
+        Refresh statistics for all tables by scanning the 'table_cat' catalog table.
 
-        self.__table_stats = {}
+        Args:
+            tx (Transaction): The current transaction.
+        """
+        self.__table_stats.clear()
         self.__calls_num = 0
 
         tcat_layout = self.__tm.get_layout("table_cat", tx)
-        # print("******************************************************888")
-        # print("Start refresh stats")
         ts = TableScan(tx, "table_cat", tcat_layout)
-        # print("******************************************************888\n before while")
+
         while ts.next():
-            # print("************************************************************88\n while started")
             tbl_name = ts.get_string("table_name")
             layout = self.__tm.get_layout(tbl_name, tx)
             info = self.__calc_table_stats(tbl_name, layout, tx)
             self.__table_stats[tbl_name] = info
-            # print("************************************************************88\n while ended")
+
         ts.close()
 
     @staticmethod
     def __calc_table_stats(table_name: str, layout: Layout, tx: Transaction) -> StatInfo:
-        records_num = 0
-        blocks_num = 0
+        """
+        Calculate the number of blocks and records for a given table by scanning it.
+
+        Args:
+            table_name (str): The name of the table to scan.
+            layout (Layout): The layout describing the structure of the table.
+            tx (Transaction): The current transaction.
+
+        Returns:
+            StatInfo: The computed statistical information for the table.
+        """
+        records_count = 0
+        blocks_count = 0
 
         ts = TableScan(tx, table_name, layout)
-        # print("before while")
         while ts.next():
-            # print("in calc while")
-            records_num += 1
-            blocks_num = ts.get_rid().block_number + 1
+            records_count += 1
+            blocks_count = max(blocks_count, ts.get_rid().block_number + 1)
         ts.close()
-        # print("after while")
-        return StatInfo(blocks_num, records_num)
+
+        return StatInfo(blocks_count, records_count)
